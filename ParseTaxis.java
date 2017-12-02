@@ -2,8 +2,8 @@ import java.io.*;
 import java.util.Scanner;
 
 public class ParseTaxis {
-	public static void main(String args[]) throws IOException {
-        BufferedReader reader = null;
+    public static void main(String args[]) throws IOException {
+    BufferedReader reader = null;
 
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("taxis.csv"))));
@@ -12,7 +12,7 @@ public class ParseTaxis {
             int id;
             String line = null;
             String[] numbers = null;
-            reader.readLine(); // read the first line with the captions
+            reader.readLine(); // skip the first line with the captions
             Taxi taxi = null;
             while ((line = reader.readLine()) != null) {
                 numbers = line.split(",");
@@ -29,14 +29,13 @@ public class ParseTaxis {
         } catch (IOException e) {
             System.err.println("Exception:" + e.toString());
         } finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					System.err.println("Exception:" + e.toString());
-				}
-			}
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    System.err.println("Exception:" + e.toString());
+                }
+            }
         }
-	}
+    }
 }
-
