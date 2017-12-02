@@ -2,9 +2,10 @@ import java.io.*;
 import java.util.Scanner;
 
 public class ParseClient {
-    public static void main(String args[]) throws IOException {
-    BufferedReader reader = null;
+    public static Position parse() {
+        BufferedReader reader = null;
 
+        Position clientPosition = null;
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/client.csv"))));
 
@@ -19,7 +20,7 @@ public class ParseClient {
             x = Double.valueOf(numbers[0].trim());
             y = Double.valueOf(numbers[1].trim());
 
-            System.out.println("Client at position: " + x + " " + y);
+            clientPosition = new Position(x, y);
         } catch (IOException e) {
             System.err.println("Exception:" + e.toString());
         } finally {
@@ -31,5 +32,7 @@ public class ParseClient {
                 }
             }
         }
+
+        return clientPosition;
     }
 }

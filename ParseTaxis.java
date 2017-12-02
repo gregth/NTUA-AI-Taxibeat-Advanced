@@ -1,9 +1,11 @@
 import java.io.*;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class ParseTaxis {
-    public static void main(String args[]) throws IOException {
-    BufferedReader reader = null;
+    public static ArrayList<Taxi> parse() {
+        BufferedReader reader = null;
+        ArrayList<Taxi> fleet = new ArrayList<Taxi>();
 
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/taxis.csv"))));
@@ -21,10 +23,7 @@ public class ParseTaxis {
                 y = Double.valueOf(numbers[1].trim());
                 id = Integer.valueOf(numbers[2].trim());
 
-                taxi = new Taxi(id, x, y);
-                taxi.printTaxi();
-
-                //System.out.println("x:" + x + " y:" + y + " id:" + id);
+                fleet.add(new Taxi(id, x, y));
             }
         } catch (IOException e) {
             System.err.println("Exception:" + e.toString());
@@ -37,5 +36,7 @@ public class ParseTaxis {
                 }
             }
         }
+
+        return fleet;
     }
 }
