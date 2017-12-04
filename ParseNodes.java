@@ -9,16 +9,11 @@ public class ParseNodes {
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/nodes.csv"))));
 
-            double x, y;
-            int streetId;
-            String streetName = null; 
-            String line = null;
+            double x, y, streetLength = 0, nodesDistance;
+            int streetId, previousStreetId = -1;
+            String streetName = null, line = null;
             String[] parts = null;
-            int previousStreetId = -1;
-            double streetLength = 0;
-            double nodesDistance;
-            Position previousNode = null;
-            Position currentPosition = null;
+            Position previousNode = null, currentPosition = null;
             ArrayList<Position> nodes = null;
 
             reader.readLine(); // skip the first line with the captions
