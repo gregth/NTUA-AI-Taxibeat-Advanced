@@ -4,6 +4,7 @@ import java.util.*;
 public class ParseNodes {
     public static HashMap<String, Set<Integer>> parse() {
         BufferedReader reader = null;
+        HashMap<Integer, ArrayList<Position>> StreetsToNodes = new HashMap<Integer, ArrayList<Position>>();
         HashMap<String, Set<Integer>> NodesToStreets = new HashMap<String, Set<Integer>>();
         Set<String> Intersections = new TreeSet<String>();
 
@@ -11,11 +12,11 @@ public class ParseNodes {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/nodes.csv"))));
 
             double x, y, streetLength = 0, nodesDistance;
-            int streetId, previousStreetId = -1;
+            int streetId = -1, previousStreetId = -1;
             String streetName = null, line = null;
             String[] parts = null;
             StreetNode previousNode = null, currentPosition = null;
-            ArrayList<StreetNode> nodes = null;
+            ArrayList<Position> nodes = null;
 
             reader.readLine(); // skip the first line with the captions
             while ((line = reader.readLine()) != null) {
@@ -44,6 +45,11 @@ public class ParseNodes {
             
                 // Check if we are parsing a new street
                 if (previousStreetId != streetId) { // new street
+                    if (previousStreetId != -1) {
+                        StreetsToNodes.put(previousStreetId, nodes);
+                    }
+
+                    nodes = new ArrayList<Position>();
                     streetLength = 0;
                     previousStreetId = streetId;
                 } else { // same street, calculate distance
@@ -51,9 +57,15 @@ public class ParseNodes {
                         nodesDistance = Math.sqrt(Math.pow(x - previousNode.x, 2) + Math.pow(y - previousNode.y, 2));
                         streetLength += nodesDistance;
                     }
+
+                    nodes.add(currentPosition);
                 }
 
                 //System.out.println(streetName + " " + id + " " + x + " " + y);
+            }
+
+            if (streetId != -1) {
+                StreetsToNodes.put(streetId, nodes);
             }
         } catch (IOException e) {
             System.err.println("Exception:" + e.toString());
