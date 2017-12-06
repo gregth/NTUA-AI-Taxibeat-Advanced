@@ -53,7 +53,7 @@ public class Taxibeat {
         Position clientPosition = Taxibeat.clientPosition(Nodes, mapClientPosition);
 
         for (Taxi taxi : fleet) {
-            taxi.printTaxi();
+            //taxi.printTaxi();
         }
 
         System.out.println("Client: ");

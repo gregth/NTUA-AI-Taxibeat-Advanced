@@ -5,6 +5,7 @@ public class ParseNodes {
     public static HashMap<Integer, ArrayList<Position>> parse() {
         BufferedReader reader = null;
         HashMap<Integer, ArrayList<Position>> Streets = new HashMap<Integer, ArrayList<Position>>();
+        Set<String> Nodes = new TreeSet<String>();
 
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/nodes.csv"))));
@@ -30,8 +31,16 @@ public class ParseNodes {
 
                 previousNode = currentPosition;
                 currentPosition = new Position(x, y);
+
+                // Check for intersections
+                if (Nodes.contains(currentPosition.stringify())) {
+                    System.out.println("Found intersection!");
+                } else {
+                    Nodes.add(currentPosition.stringify());
+                }
             
-                if (previousStreetId != streetId) { // new Street
+                // Check if we are parsing a new street
+                if (previousStreetId != streetId) { // new street
                     if (previousStreetId != -1) {
                         Streets.put(previousStreetId, nodes);
                     }

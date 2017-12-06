@@ -10,4 +10,8 @@ public class Position {
     public void print() {
         System.out.println("x: " + x + " y: " + y);
     }
+
+    public String stringify() {
+        return this.x + " " + this.y;
+    }
 }
