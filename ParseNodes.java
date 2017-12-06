@@ -30,7 +30,7 @@ public class ParseNodes {
                         currentNode = streetNodesItr.next();
                         String currentNodeString = currentNode.stringify();
                         System.out.println("Current Node String: " + currentNodeString);
-                        if (currentNodeString == intersection) {
+                        if (currentNodeString.equals(intersection)) {
                             currentIntersection = currentNode;
                             System.out.println("Intersection is myself");
                             foundIntersection = true;
@@ -98,9 +98,6 @@ public class ParseNodes {
                 if (NodesToStreets.containsKey(currentPosition.stringify())) {
                     //System.out.println("Found intersection!");
                     Intersections.add(currentPosition.stringify());
-                    if (Intersections.size() == 1) {
-                        System.out.println(currentPosition.stringify());
-                    }
                 } else { // new node
                     NodesToStreets.put(currentPosition.stringify(), new TreeSet<Integer>());
                 }
@@ -121,9 +118,9 @@ public class ParseNodes {
                         nodesDistance = Math.sqrt(Math.pow(x - previousNode.x, 2) + Math.pow(y - previousNode.y, 2));
                         streetLength += nodesDistance;
                     }
-
-                    nodes.add(currentPosition);
                 }
+
+                nodes.add(currentPosition);
 
                 //System.out.println(streetName + " " + id + " " + x + " " + y);
             }
