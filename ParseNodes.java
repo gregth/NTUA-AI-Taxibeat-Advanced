@@ -7,23 +7,31 @@ public class ParseNodes {
             HashMap<String, Set<Integer>> NodesToStreets,
             HashMap<Integer, ArrayList<Position>> StreetsToNodes
     ) {
+        HashMap<String, Set<GraphNode>> searchSpace = new HashMap<String, Set<GraphNode>>();
         Set<Integer> streetIDs = null;
         ArrayList<Position> streetNodes = null;
         for (String intersection : Intersections) {
             System.out.println(intersection);
             streetIDs = NodesToStreets.get(intersection);
             if (streetIDs != null) {
+                Set<GraphNode> neighbors = new TreeSet<GraphNode>();
                 for (Integer streetID : streetIDs) {
                     System.out.println(streetID);
                     streetNodes = StreetsToNodes.get(streetID);
-                    Iterator<Position> streeNodesItr = streeNodes.iterator();
+                    Iterator<Position> streetNodesItr = streetNodes.iterator();
                     Position prevIntersection = null, nextIntersection = null;
                     Position currentNode = null;
+                    Position currentIntersection = null;
                     boolean foundIntersection = false;
-                    while (streeNodesItr.hasNext()) {
-                        currentNode = StreetsToNodes.next();
+                    double distanceToPrev, distanceToNext;
+                    GraphNode prevGraphNode = null, nextGraphNode = null;
+                    System.out.println("Intersection String: " + intersection);
+                    while (streetNodesItr.hasNext()) {
+                        currentNode = streetNodesItr.next();
                         String currentNodeString = currentNode.stringify();
+                        System.out.println("Current Node String: " + currentNodeString);
                         if (currentNodeString == intersection) {
+                            currentIntersection = currentNode;
                             System.out.println("Intersection is myself");
                             foundIntersection = true;
                         } else if (Intersections.contains(currentNodeString)) {
@@ -35,6 +43,19 @@ public class ParseNodes {
                             }
                         }
                     }
+                    if (prevIntersection != null) {
+                        distanceToPrev = currentIntersection.distanceTo(prevIntersection);
+                        prevGraphNode = new GraphNode(prevIntersection.stringify(), distanceToPrev);
+                        neighbors.add(prevGraphNode);
+                    }
+                    if (nextIntersection != null) {
+                        distanceToNext = currentIntersection.distanceTo(nextIntersection);
+                        nextGraphNode = new GraphNode(nextIntersection.stringify(), distanceToNext);
+                        neighbors.add(nextGraphNode);
+                    }
+                }
+                if (neighbors.size() > 0) {
+                    searchSpace.put(intersection, neighbors);
                 }
             }
             break;
