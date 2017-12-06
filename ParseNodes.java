@@ -2,10 +2,11 @@ import java.io.*;
 import java.util.*;
 
 public class ParseNodes {
-    public static HashMap<Integer, ArrayList<Position>> parse() {
+    public static HashMap<String, Set<Integer>> parse() {
         BufferedReader reader = null;
-        HashMap<Integer, ArrayList<Position>> Streets = new HashMap<Integer, ArrayList<Position>>();
-        Set<String> Nodes = new TreeSet<String>();
+        HashMap<Integer, ArrayList<StreetNode>> Streets = new HashMap<Integer, ArrayList<StreetNode>>();
+        HashMap<String, Set<Integer>> NodesToStreets = new HashMap<String, Set<Integer>>();
+        Set<String> Intersections = new TreeSet<String>();
 
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/nodes.csv"))));
@@ -14,8 +15,8 @@ public class ParseNodes {
             int streetId, previousStreetId = -1;
             String streetName = null, line = null;
             String[] parts = null;
-            Position previousNode = null, currentPosition = null;
-            ArrayList<Position> nodes = null;
+            StreetNode previousNode = null, currentPosition = null;
+            ArrayList<StreetNode> nodes = null;
 
             reader.readLine(); // skip the first line with the captions
             while ((line = reader.readLine()) != null) {
@@ -30,22 +31,20 @@ public class ParseNodes {
                 }
 
                 previousNode = currentPosition;
-                currentPosition = new Position(x, y);
+                currentPosition = new StreetNode(x, y);
 
                 // Check for intersections
-                if (Nodes.contains(currentPosition.stringify())) {
-                    System.out.println("Found intersection!");
-                } else {
-                    Nodes.add(currentPosition.stringify());
+                if (NodesToStreets.containsKey(currentPosition.stringify())) {
+                    //System.out.println("Found intersection!");
+                    Intersections.add(currentPosition.stringify());
+                } else { // new node
+                    NodesToStreets.put(currentPosition.stringify(), new TreeSet<Integer>());
                 }
+                Set<Integer> streetsFound = NodesToStreets.get(currentPosition.stringify());
+                streetsFound.add(streetId); // Sets prevent duplicates
             
                 // Check if we are parsing a new street
                 if (previousStreetId != streetId) { // new street
-                    if (previousStreetId != -1) {
-                        Streets.put(previousStreetId, nodes);
-                    }
-
-                    nodes = new ArrayList<Position>();
                     streetLength = 0;
                     previousStreetId = streetId;
                 } else { // same street, calculate distance
@@ -55,12 +54,8 @@ public class ParseNodes {
                     }
                 }
 
-                nodes.add(currentPosition);
-
                 //System.out.println(streetName + " " + id + " " + x + " " + y);
             }
-
-            Streets.put(previousStreetId, nodes);
         } catch (IOException e) {
             System.err.println("Exception:" + e.toString());
         } finally {
@@ -73,6 +68,6 @@ public class ParseNodes {
             }
         }
 
-        return Streets;
+        return NodesToStreets;
     }
 }
