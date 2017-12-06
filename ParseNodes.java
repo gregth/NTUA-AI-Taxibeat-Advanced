@@ -4,7 +4,6 @@ import java.util.*;
 public class ParseNodes {
     public static HashMap<String, Set<Integer>> parse() {
         BufferedReader reader = null;
-        HashMap<Integer, ArrayList<StreetNode>> Streets = new HashMap<Integer, ArrayList<StreetNode>>();
         HashMap<String, Set<Integer>> NodesToStreets = new HashMap<String, Set<Integer>>();
         Set<String> Intersections = new TreeSet<String>();
 
