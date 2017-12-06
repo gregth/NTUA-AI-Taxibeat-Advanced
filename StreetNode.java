@@ -1,5 +1,5 @@
 public class StreetNode extends Position {
-    public boolean isIntersection = false;
+    private  boolean isIntersection = false;
 
     public StreetNode(double x, double y) {
         super(x, y);
@@ -7,5 +7,9 @@ public class StreetNode extends Position {
 
     public void setIntersection() {
         this.isIntersection = true;
+    }
+
+    public boolean isIntersection() {
+        return this.isIntersection;
     }
 }
