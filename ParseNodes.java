@@ -2,19 +2,19 @@ import java.io.*;
 import java.util.*;
 
 public class ParseNodes {
-    private static HashMap<String, Set<GraphNode>> generateSearchSpace(
+    private static HashMap<String, ArrayList<GraphNode>> generateSearchSpace(
             Set<String> Intersections,
             HashMap<String, Set<Integer>> NodesToStreets,
             HashMap<Integer, ArrayList<Position>> StreetsToNodes
     ) {
-        HashMap<String, Set<GraphNode>> searchSpace = new HashMap<String, Set<GraphNode>>();
+        HashMap<String, ArrayList<GraphNode>> searchSpace = new HashMap<String, ArrayList<GraphNode>>();
         Set<Integer> streetIDs = null;
         ArrayList<Position> streetNodes = null;
         for (String intersection : Intersections) {
             System.out.println(intersection);
             streetIDs = NodesToStreets.get(intersection);
             if (streetIDs != null) {
-                Set<GraphNode> neighbors = new TreeSet<GraphNode>();
+                ArrayList<GraphNode> neighbors = new ArrayList<GraphNode>();
                 for (Integer streetID : streetIDs) {
                     System.out.println(streetID);
                     streetNodes = StreetsToNodes.get(streetID);
