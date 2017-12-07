@@ -2,6 +2,61 @@ import java.io.*;
 import java.util.*;
 
 public class ParseNodes {
+    private static ArrayList<GraphNode> findNeighbors(
+        Integer streetID,
+        String intersection,
+        Set<String> Intersections,
+        HashMap<Integer, ArrayList<Position>> StreetsToNodes
+    ) {
+        ArrayList<Position> streetNodes = StreetsToNodes.get(streetID);
+        Iterator<Position> streetNodesItr = streetNodes.iterator();
+        Position prevIntersection = null, nextIntersection = null, currentNode = null, currentIntersection = null;
+        boolean foundIntersection = false;
+        double distanceToPrev, distanceToNext;
+        GraphNode prevGraphNode = null, nextGraphNode = null;
+
+        ArrayList<GraphNode> neighbors = new ArrayList<GraphNode>();
+        while (streetNodesItr.hasNext()) {
+            currentNode = streetNodesItr.next();
+            String currentNodeString = currentNode.stringify();
+            if (currentNodeString.equals(intersection)) {
+                currentIntersection = currentNode;
+                foundIntersection = true;
+            } else if (Intersections.contains(currentNodeString)) {
+                if (!foundIntersection) {
+                    prevIntersection = currentNode;
+                } else {
+                    nextIntersection = currentNode;
+                    break;
+                }
+            }
+        }
+
+        if (prevIntersection != null) {
+            distanceToPrev = currentIntersection.distanceTo(prevIntersection);
+            prevGraphNode = new GraphNode(prevIntersection.stringify(), distanceToPrev);
+            neighbors.add(prevGraphNode);
+        }
+        if (nextIntersection != null) {
+            distanceToNext = currentIntersection.distanceTo(nextIntersection);
+            nextGraphNode = new GraphNode(nextIntersection.stringify(), distanceToNext);
+            neighbors.add(nextGraphNode);
+        }
+
+        return neighbors;
+    }
+
+    private static void printSearchSpace(HashMap<String, ArrayList<GraphNode>> searchSpace) {
+        ArrayList<GraphNode> neighbors;
+        for(String currentNode : searchSpace.keySet()) {
+            System.out.println("Neighbors of " + currentNode);
+            neighbors = searchSpace.get(currentNode);
+            for (GraphNode neighbor : neighbors) {
+                neighbor.print();
+            }
+        }
+    }
+
     private static HashMap<String, ArrayList<GraphNode>> generateSearchSpace(
             Set<String> Intersections,
             HashMap<String, Set<Integer>> NodesToStreets,
@@ -9,58 +64,25 @@ public class ParseNodes {
     ) {
         HashMap<String, ArrayList<GraphNode>> searchSpace = new HashMap<String, ArrayList<GraphNode>>();
         Set<Integer> streetIDs = null;
-        ArrayList<Position> streetNodes = null;
+        System.out.println("Found " + Intersections.size() + " intersections.");
         for (String intersection : Intersections) {
-            System.out.println(intersection);
+            //System.out.println(intersection);
             streetIDs = NodesToStreets.get(intersection);
             if (streetIDs != null) {
-                ArrayList<GraphNode> neighbors = new ArrayList<GraphNode>();
+                ArrayList<GraphNode> neighbors = null;
                 for (Integer streetID : streetIDs) {
-                    System.out.println(streetID);
-                    streetNodes = StreetsToNodes.get(streetID);
-                    Iterator<Position> streetNodesItr = streetNodes.iterator();
-                    Position prevIntersection = null, nextIntersection = null;
-                    Position currentNode = null;
-                    Position currentIntersection = null;
-                    boolean foundIntersection = false;
-                    double distanceToPrev, distanceToNext;
-                    GraphNode prevGraphNode = null, nextGraphNode = null;
-                    System.out.println("Intersection String: " + intersection);
-                    while (streetNodesItr.hasNext()) {
-                        currentNode = streetNodesItr.next();
-                        String currentNodeString = currentNode.stringify();
-                        System.out.println("Current Node String: " + currentNodeString);
-                        if (currentNodeString.equals(intersection)) {
-                            currentIntersection = currentNode;
-                            System.out.println("Intersection is myself");
-                            foundIntersection = true;
-                        } else if (Intersections.contains(currentNodeString)) {
-                            if (!foundIntersection) {
-                                prevIntersection = currentNode;
-                            } else {
-                                nextIntersection = currentNode;
-                                break;
-                            }
-                        }
+                    neighbors = findNeighbors(streetID, intersection, Intersections, StreetsToNodes);
+
+                    if (neighbors.size() > 0) {
+                        searchSpace.put(intersection, neighbors);
                     }
-                    if (prevIntersection != null) {
-                        distanceToPrev = currentIntersection.distanceTo(prevIntersection);
-                        prevGraphNode = new GraphNode(prevIntersection.stringify(), distanceToPrev);
-                        neighbors.add(prevGraphNode);
-                    }
-                    if (nextIntersection != null) {
-                        distanceToNext = currentIntersection.distanceTo(nextIntersection);
-                        nextGraphNode = new GraphNode(nextIntersection.stringify(), distanceToNext);
-                        neighbors.add(nextGraphNode);
-                    }
-                }
-                if (neighbors.size() > 0) {
-                    searchSpace.put(intersection, neighbors);
                 }
             }
+            ParseNodes.printSearchSpace(searchSpace);
             break;
         }
-        return null;
+
+        return searchSpace;
     };
 
     public static HashMap<String, Set<Integer>> parse() {

@@ -6,5 +6,9 @@ public class GraphNode {
         this.position = position;
         this.weight = weight;
     }
+
+    public void print() {
+        System.out.println("('" + this.position + "', " + this.weight + ")");
+    }
 }
 
