@@ -19,7 +19,7 @@ public class World {
         return instance;
     }
 
-    private ArrayList<GraphNode> findNeighbors(Integer streetID, String intersection) {
+    private ArrayList<GraphNode> findNeighborIntersections(Integer streetID, String position) {
         ArrayList<Position> streetNodes = StreetsToNodes.get(streetID);
         Iterator<Position> streetNodesItr = streetNodes.iterator();
         Position prevIntersection = null, nextIntersection = null,
@@ -32,7 +32,7 @@ public class World {
         while (streetNodesItr.hasNext()) {
             currentNode = streetNodesItr.next();
             String currentNodeString = currentNode.stringify();
-            if (currentNodeString.equals(intersection)) {
+            if (currentNodeString.equals(position)) {
                 currentIntersection = currentNode;
                 foundIntersection = true;
             } else if (Intersections.contains(currentNodeString)) {
@@ -79,7 +79,7 @@ public class World {
             if (streetIDs != null) {
                 ArrayList<GraphNode> neighbors = null;
                 for (Integer streetID : streetIDs) {
-                    neighbors = findNeighbors(streetID, intersection);
+                    neighbors = findNeighborIntersections(streetID, intersection);
 
                     if (neighbors.size() > 0) {
                         searchSpace.put(intersection, neighbors);
