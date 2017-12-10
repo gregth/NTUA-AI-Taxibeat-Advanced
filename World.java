@@ -70,24 +70,35 @@ public class World {
         }
     }
 
-    public void generateSearchSpace() {
+    public void generateSearchSpace(Client clientPosition) {
         Set<Integer> streetIDs = null;
+        ArrayList<GraphNode> neighbors = null, buffer;
         System.out.println("Found " + Intersections.size() + " intersections.");
+
+        Position clientNodePosition = closestStreeNode(clientPosition);
+        String clientNodeString = clientNodePosition.stringify();
+        if (!Intersections.contains(clientNodeString)) {
+            Intersections.add(clientNodeString);
+            System.out.println("Added to intersections");
+        }
+
         for (String intersection : Intersections) {
             //System.out.println(intersection);
             streetIDs = NodesToStreets.get(intersection);
             if (streetIDs != null) {
-                ArrayList<GraphNode> neighbors = null;
                 for (Integer streetID : streetIDs) {
                     neighbors = findNeighborIntersections(streetID, intersection);
 
                     if (neighbors.size() > 0) {
-                        searchSpace.put(intersection, neighbors);
+                        if (!searchSpace.containsKey(intersection)) {
+                            searchSpace.put(intersection, new ArrayList<GraphNode>());
+                        }
+
+                        buffer = searchSpace.get(intersection);
+                        buffer.addAll(neighbors);
                     }
                 }
             }
-            printSearchSpace(searchSpace);
-            break;
         }
     };
 
