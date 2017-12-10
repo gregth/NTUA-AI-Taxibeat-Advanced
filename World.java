@@ -5,6 +5,7 @@ public class World {
     private Set<String> Intersections;
     private HashMap<String, Set<Integer>> NodesToStreets;
     private HashMap<Integer, ArrayList<Position>> StreetsToNodes;
+    private HashMap<String, ArrayList<GraphNode>> searchSpace;
 
     // Make Singleton Instance of the World Class
     private static final World instance = new World();
@@ -12,6 +13,7 @@ public class World {
         StreetsToNodes = new HashMap<Integer, ArrayList<Position>>();
         NodesToStreets = new HashMap<String, Set<Integer>>();
         Intersections = new TreeSet<String>();
+        searchSpace = new HashMap<String, ArrayList<GraphNode>>();
     };
     public static World getInstance() {
         return instance;
@@ -68,8 +70,7 @@ public class World {
         }
     }
 
-    private HashMap<String, ArrayList<GraphNode>> generateSearchSpace() {
-        HashMap<String, ArrayList<GraphNode>> searchSpace = new HashMap<String, ArrayList<GraphNode>>();
+    public void generateSearchSpace() {
         Set<Integer> streetIDs = null;
         System.out.println("Found " + Intersections.size() + " intersections.");
         for (String intersection : Intersections) {
@@ -88,8 +89,6 @@ public class World {
             printSearchSpace(searchSpace);
             break;
         }
-
-        return searchSpace;
     };
 
     public Position closestStreeNode(Position position) {
@@ -114,7 +113,7 @@ public class World {
         return nodePosition;
     }
 
-    public HashMap<String, Set<Integer>> parse() {
+    public void parse() {
         BufferedReader reader = null;
 
         try {
@@ -176,7 +175,6 @@ public class World {
             if (streetId != -1) {
                 StreetsToNodes.put(streetId, nodes);
             }
-            generateSearchSpace();
         } catch (IOException e) {
             System.err.println("Exception:" + e.toString());
         } finally {
@@ -188,7 +186,5 @@ public class World {
                 }
             }
         }
-
-        return NodesToStreets;
     }
 }

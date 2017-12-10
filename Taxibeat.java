@@ -7,7 +7,8 @@ public class Taxibeat {
         ArrayList<Taxi> fleet = ParseTaxis.parse();
         Client mapClientPosition = ParseClient.parse();
 
-        HashMap<String, Set<Integer>> Nodes = myWorld.parse();
+        myWorld.parse();
+        myWorld.generateSearchSpace();
 
         Position driverPosition = myWorld.closestStreeNode(fleet.get(0));
         Position clientPosition = myWorld.closestStreeNode(mapClientPosition);
