@@ -5,21 +5,21 @@ public class Taxibeat {
     public static void main(String[] args) {
         World myWorld = World.getInstance();
         ArrayList<Taxi> fleet = Taxi.parse();
-        Client mapClientPosition = Client.parse();
+        Client clientPosition = Client.parse();
 
         myWorld.parse();
-        myWorld.generateSearchSpace(mapClientPosition);
+        myWorld.generateSearchSpace(clientPosition);
+        HashMap<String, ArrayList<GraphNode>> searchSpace = myWorld.addDriverToSpace(fleet.get(0));
 
         Position driverPosition = myWorld.closestStreeNode(fleet.get(0));
-        Position clientPosition = myWorld.closestStreeNode(mapClientPosition);
 
         for (Taxi taxi : fleet) {
             //taxi.printTaxi();
         }
 
         System.out.println("Client: ");
-        clientPosition.print();
+        myWorld.clientPosition.print();
         System.out.println("Taxi: ");
-        driverPosition.print();
+        clientPosition.print();
     }
 }

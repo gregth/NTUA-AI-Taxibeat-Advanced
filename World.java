@@ -71,6 +71,29 @@ public class World {
         }
     }
 
+    private HashMap<String, ArrayList<GraphNode>> cloneSearchSpace() {
+        HashMap<String, ArrayList<GraphNode>> clone = new HashMap<String, ArrayList<GraphNode>>();
+        ArrayList<GraphNode> neighbors, cloneNeighbors;
+        for(String currentNode : searchSpace.keySet()) {
+            neighbors = searchSpace.get(currentNode);
+            cloneNeighbors = new ArrayList<GraphNode>();
+            for (GraphNode neighbor : neighbors) {
+                cloneNeighbors.add(neighbor);
+                neighbor.print();
+            }
+            clone.put(currentNode, cloneNeighbors);
+        }
+
+        return clone;
+    }
+
+    public HashMap<String, ArrayList<GraphNode>> addDriverToSpace(Taxi driverPosition) {
+        HashMap<String, ArrayList<GraphNode>> clonedSpace = cloneSearchSpace();
+
+
+        return null;
+    }
+
     public void generateSearchSpace(Client clientPosition) {
         Set<Integer> streetIDs = null;
         ArrayList<GraphNode> neighbors = null, buffer;
