@@ -1,16 +1,16 @@
 import java.io.*;
 
-public class Taxi {
+public class Taxi extends Position {
     int id;
-    Position position;
 
     public Taxi(int id, double x, double y) {
+        super(x, y);
+
         this.id = id;
-        this.position = new Position(x, y);
     }
 
     public void printTaxi() {
         System.out.println("Taxi: " + id );
-        this.position.print();
+        this.print();
     }
 }

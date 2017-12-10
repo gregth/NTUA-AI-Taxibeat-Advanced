@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Taxibeat {
     public static Position driverPosition(HashMap<String, Set<Integer>> Nodes, Taxi driver) {
-        Position driverPosition = driver.position;
+        Position driverPosition = driver;
         Position nodeDriverPosition = null;
 
         double minDriverDistance = -1, driverDistance, x, y;
@@ -50,7 +50,7 @@ public class Taxibeat {
     public static void main(String[] args) {
         World myWorld = World.getInstance();
         ArrayList<Taxi> fleet = ParseTaxis.parse();
-        Position mapClientPosition = ParseClient.parse();
+        Client mapClientPosition = ParseClient.parse();
 
         HashMap<String, Set<Integer>> Nodes = myWorld.parse();
 
