@@ -48,10 +48,11 @@ public class Taxibeat {
     }
 
     public static void main(String[] args) {
+        World myWorld = World.getInstance();
         ArrayList<Taxi> fleet = ParseTaxis.parse();
         Position mapClientPosition = ParseClient.parse();
 
-        HashMap<String, Set<Integer>> Nodes = ParseNodes.parse();
+        HashMap<String, Set<Integer>> Nodes = myWorld.parse();
 
         Position driverPosition = Taxibeat.driverPosition(Nodes, fleet.get(0));
         Position clientPosition = Taxibeat.clientPosition(Nodes, mapClientPosition);

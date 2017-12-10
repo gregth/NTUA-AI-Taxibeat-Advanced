@@ -1,16 +1,27 @@
 import java.io.*;
 import java.util.*;
 
-public class ParseNodes {
-    private static ArrayList<GraphNode> findNeighbors(
-        Integer streetID,
-        String intersection,
-        Set<String> Intersections,
-        HashMap<Integer, ArrayList<Position>> StreetsToNodes
-    ) {
+public class World {
+    private Set<String> Intersections;
+    private HashMap<String, Set<Integer>> NodesToStreets;
+    private HashMap<Integer, ArrayList<Position>> StreetsToNodes;
+
+    // Make Singleton Instance of the World Class
+    private static final World instance = new World();
+    private World() {
+        StreetsToNodes = new HashMap<Integer, ArrayList<Position>>();
+        NodesToStreets = new HashMap<String, Set<Integer>>();
+        Intersections = new TreeSet<String>();
+    };
+    public static World getInstance() {
+        return instance;
+    }
+
+    private ArrayList<GraphNode> findNeighbors(Integer streetID, String intersection) {
         ArrayList<Position> streetNodes = StreetsToNodes.get(streetID);
         Iterator<Position> streetNodesItr = streetNodes.iterator();
-        Position prevIntersection = null, nextIntersection = null, currentNode = null, currentIntersection = null;
+        Position prevIntersection = null, nextIntersection = null,
+            currentNode = null, currentIntersection = null;
         boolean foundIntersection = false;
         double distanceToPrev, distanceToNext;
         GraphNode prevGraphNode = null, nextGraphNode = null;
@@ -46,7 +57,7 @@ public class ParseNodes {
         return neighbors;
     }
 
-    private static void printSearchSpace(HashMap<String, ArrayList<GraphNode>> searchSpace) {
+    private void printSearchSpace(HashMap<String, ArrayList<GraphNode>> searchSpace) {
         ArrayList<GraphNode> neighbors;
         for(String currentNode : searchSpace.keySet()) {
             System.out.println("Neighbors of " + currentNode);
@@ -57,11 +68,7 @@ public class ParseNodes {
         }
     }
 
-    private static HashMap<String, ArrayList<GraphNode>> generateSearchSpace(
-            Set<String> Intersections,
-            HashMap<String, Set<Integer>> NodesToStreets,
-            HashMap<Integer, ArrayList<Position>> StreetsToNodes
-    ) {
+    private HashMap<String, ArrayList<GraphNode>> generateSearchSpace() {
         HashMap<String, ArrayList<GraphNode>> searchSpace = new HashMap<String, ArrayList<GraphNode>>();
         Set<Integer> streetIDs = null;
         System.out.println("Found " + Intersections.size() + " intersections.");
@@ -71,25 +78,22 @@ public class ParseNodes {
             if (streetIDs != null) {
                 ArrayList<GraphNode> neighbors = null;
                 for (Integer streetID : streetIDs) {
-                    neighbors = findNeighbors(streetID, intersection, Intersections, StreetsToNodes);
+                    neighbors = findNeighbors(streetID, intersection);
 
                     if (neighbors.size() > 0) {
                         searchSpace.put(intersection, neighbors);
                     }
                 }
             }
-            ParseNodes.printSearchSpace(searchSpace);
+            printSearchSpace(searchSpace);
             break;
         }
 
         return searchSpace;
     };
 
-    public static HashMap<String, Set<Integer>> parse() {
+    public HashMap<String, Set<Integer>> parse() {
         BufferedReader reader = null;
-        HashMap<Integer, ArrayList<Position>> StreetsToNodes = new HashMap<Integer, ArrayList<Position>>();
-        HashMap<String, Set<Integer>> NodesToStreets = new HashMap<String, Set<Integer>>();
-        Set<String> Intersections = new TreeSet<String>();
 
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/nodes.csv"))));
@@ -119,7 +123,7 @@ public class ParseNodes {
                 // Check for intersections
                 if (NodesToStreets.containsKey(currentPosition.stringify())) {
                     //System.out.println("Found intersection!");
-                    Intersections.add(currentPosition.stringify());
+                    Intersections.add(currentPosition.stringify());//
                 } else { // new node
                     NodesToStreets.put(currentPosition.stringify(), new TreeSet<Integer>());
                 }
@@ -150,7 +154,7 @@ public class ParseNodes {
             if (streetId != -1) {
                 StreetsToNodes.put(streetId, nodes);
             }
-            generateSearchSpace(Intersections, NodesToStreets, StreetsToNodes);
+            generateSearchSpace();
         } catch (IOException e) {
             System.err.println("Exception:" + e.toString());
         } finally {
