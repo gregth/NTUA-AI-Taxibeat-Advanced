@@ -92,6 +92,28 @@ public class World {
         return searchSpace;
     };
 
+    public Position closestStreeNode(Position position) {
+        Position nodePosition = null;
+
+        double minDistance = -1, distance, x, y;
+        String[] parts;
+
+        for(String currentNode : NodesToStreets.keySet()) {
+            parts = currentNode.split(" ");
+            x = Double.valueOf(parts[0].trim());
+            y = Double.valueOf(parts[1].trim());
+
+            distance = Math.sqrt(Math.pow(position.x - x, 2) + Math.pow(position.y - y, 2));
+
+            if (minDistance < 0 || distance < minDistance) {
+                minDistance = distance;
+                nodePosition = new Position(x, y);
+            }
+        }
+
+        return nodePosition;
+    }
+
     public HashMap<String, Set<Integer>> parse() {
         BufferedReader reader = null;
 
