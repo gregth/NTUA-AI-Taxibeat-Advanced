@@ -4,8 +4,8 @@ import java.util.*;
 public class Taxibeat {
     public static void main(String[] args) {
         World myWorld = World.getInstance();
-        ArrayList<Taxi> fleet = ParseTaxis.parse();
-        Client mapClientPosition = ParseClient.parse();
+        ArrayList<Taxi> fleet = Taxi.parse();
+        Client mapClientPosition = Client.parse();
 
         myWorld.parse();
         myWorld.generateSearchSpace(mapClientPosition);
