@@ -6,6 +6,7 @@ public class World {
     private HashMap<String, Set<Integer>> NodesToStreets;
     private HashMap<Integer, ArrayList<Position>> StreetsToNodes;
     private HashMap<String, ArrayList<GraphNode>> searchSpace;
+    public Position clientPosition;
 
     // Make Singleton Instance of the World Class
     private static final World instance = new World();
@@ -76,6 +77,7 @@ public class World {
         System.out.println("Found " + Intersections.size() + " intersections.");
 
         Position clientNodePosition = closestStreeNode(clientPosition);
+        this.clientPosition = clientNodePosition;
         String clientNodeString = clientNodePosition.stringify();
         if (!Intersections.contains(clientNodeString)) {
             Intersections.add(clientNodeString);
