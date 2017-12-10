@@ -8,8 +8,7 @@ public class Taxibeat {
         Client clientPosition = Client.parse();
 
         myWorld.parse();
-        myWorld.generateSearchSpace(clientPosition);
-        HashMap<String, ArrayList<GraphNode>> searchSpace = myWorld.addDriverToSpace(fleet.get(0));
+        HashMap<String, ArrayList<GraphNode>> searchSpace = myWorld.generateSearchSpace(clientPosition, fleet.get(0));
 
         Position driverPosition = myWorld.closestStreeNode(fleet.get(0));
 
@@ -19,7 +18,5 @@ public class Taxibeat {
 
         System.out.println("Client: ");
         myWorld.clientPosition.print();
-        System.out.println("Taxi: ");
-        clientPosition.print();
     }
 }

@@ -5,7 +5,6 @@ public class World {
     private Set<String> Intersections;
     private HashMap<String, Set<Integer>> NodesToStreets;
     private HashMap<Integer, ArrayList<Position>> StreetsToNodes;
-    private HashMap<String, ArrayList<GraphNode>> searchSpace;
     public Position clientPosition;
 
     // Make Singleton Instance of the World Class
@@ -14,7 +13,6 @@ public class World {
         StreetsToNodes = new HashMap<Integer, ArrayList<Position>>();
         NodesToStreets = new HashMap<String, Set<Integer>>();
         Intersections = new TreeSet<String>();
-        searchSpace = new HashMap<String, ArrayList<GraphNode>>();
     };
     public static World getInstance() {
         return instance;
@@ -71,44 +69,26 @@ public class World {
         }
     }
 
-    private HashMap<String, ArrayList<GraphNode>> cloneSearchSpace() {
-        HashMap<String, ArrayList<GraphNode>> clone = new HashMap<String, ArrayList<GraphNode>>();
-        ArrayList<GraphNode> neighbors, cloneNeighbors;
-        for(String currentNode : searchSpace.keySet()) {
-            neighbors = searchSpace.get(currentNode);
-            cloneNeighbors = new ArrayList<GraphNode>();
-            for (GraphNode neighbor : neighbors) {
-                cloneNeighbors.add(neighbor);
-                neighbor.print();
-            }
-            clone.put(currentNode, cloneNeighbors);
-        }
-
-        return clone;
-    }
-
-    public HashMap<String, ArrayList<GraphNode>> addDriverToSpace(Taxi driverPosition) {
-        HashMap<String, ArrayList<GraphNode>> clonedSpace = cloneSearchSpace();
-
-
-        return null;
-    }
-
-    public void generateSearchSpace(Client clientPosition) {
+    public HashMap<String, ArrayList<GraphNode>> generateSearchSpace(Client clientPosition, Taxi driverPosition) {
+        HashMap<String, ArrayList<GraphNode>> searchSpace = new HashMap<String, ArrayList<GraphNode>>();
         Set<Integer> streetIDs = null;
         ArrayList<GraphNode> neighbors = null, buffer;
-        System.out.println("Found " + Intersections.size() + " intersections.");
 
         Position clientNodePosition = closestStreeNode(clientPosition);
         this.clientPosition = clientNodePosition;
         String clientNodeString = clientNodePosition.stringify();
         if (!Intersections.contains(clientNodeString)) {
             Intersections.add(clientNodeString);
-            System.out.println("Added to intersections");
         }
 
+        Position driverNodePosition = closestStreeNode(driverPosition);
+        String driverNodeString = driverNodePosition.stringify();
+        if (!Intersections.contains(driverNodeString)) {
+            Intersections.add(driverNodeString);
+        }
+
+
         for (String intersection : Intersections) {
-            //System.out.println(intersection);
             streetIDs = NodesToStreets.get(intersection);
             if (streetIDs != null) {
                 for (Integer streetID : streetIDs) {
@@ -125,6 +105,8 @@ public class World {
                 }
             }
         }
+
+        return searchSpace;
     };
 
     public Position closestStreeNode(Position position) {
@@ -179,7 +161,6 @@ public class World {
 
                 // Check for intersections
                 if (NodesToStreets.containsKey(currentPosition.stringify())) {
-                    //System.out.println("Found intersection!");
                     Intersections.add(currentPosition.stringify());//
                 } else { // new node
                     NodesToStreets.put(currentPosition.stringify(), new TreeSet<Integer>());
@@ -204,8 +185,6 @@ public class World {
                 }
 
                 nodes.add(currentPosition);
-
-                //System.out.println(streetName + " " + id + " " + x + " " + y);
             }
 
             if (streetId != -1) {
