@@ -18,5 +18,7 @@ public class Taxibeat {
 
         System.out.println("Client: ");
         myWorld.clientPosition.print();
+        String[] test = {"test"};
+        XMLFile.getInstance().write(test);
     }
 }
