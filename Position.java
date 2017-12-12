@@ -15,6 +15,22 @@ public class Position {
         return this.x + " " + this.y;
     }
 
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public static Position parsePosition(String positionString) {
+        String[] parts = positionString.split(" ");
+        double x = Double.valueOf(parts[0].trim());
+        double y = Double.valueOf(parts[1].trim());
+
+        return new Position(x, y);
+    }
+
     public double distanceTo(Position b) {
        return Math.sqrt(Math.pow(this.x - b.x, 2) + Math.pow(this.y - b.y, 2));
     }
