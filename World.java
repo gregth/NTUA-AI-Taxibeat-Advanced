@@ -18,13 +18,13 @@ public class World {
         return instance;
     }
 
-    private ArrayList<GraphNode> findNeighborIntersections(Integer streetID, String position) {
+    private ArrayList<GraphNode> findNeighborIntersections(Integer streetID, String position, Position goalNode) {
         ArrayList<Position> streetNodes = StreetsToNodes.get(streetID);
         Iterator<Position> streetNodesItr = streetNodes.iterator();
         Position prevIntersection = null, nextIntersection = null,
             currentNode = null, currentIntersection = null;
         boolean foundIntersection = false;
-        double distanceToPrev, distanceToNext;
+        double distanceToPrev, distanceToNext, distanceToGoal;
         GraphNode prevGraphNode = null, nextGraphNode = null;
 
         ArrayList<GraphNode> neighbors = new ArrayList<GraphNode>();
@@ -46,12 +46,20 @@ public class World {
 
         if (prevIntersection != null) {
             distanceToPrev = currentIntersection.distanceTo(prevIntersection);
-            prevGraphNode = new GraphNode(prevIntersection.stringify(), distanceToPrev);
+            distanceToGoal = prevIntersection.distanceTo(goalNode);
+            prevGraphNode = new GraphNode(prevIntersection.stringify(), distanceToPrev, distanceToGoal);
+            if (distanceToGoal == 0) {
+                prevGraphNode.setGoal();
+            }
             neighbors.add(prevGraphNode);
         }
         if (nextIntersection != null) {
             distanceToNext = currentIntersection.distanceTo(nextIntersection);
-            nextGraphNode = new GraphNode(nextIntersection.stringify(), distanceToNext);
+            distanceToGoal = nextIntersection.distanceTo(goalNode);
+            nextGraphNode = new GraphNode(nextIntersection.stringify(), distanceToNext, distanceToGoal);
+            if (distanceToGoal == 0) {
+                nextGraphNode.setGoal();
+            }
             neighbors.add(nextGraphNode);
         }
 
@@ -92,7 +100,7 @@ public class World {
             streetIDs = NodesToStreets.get(intersection);
             if (streetIDs != null) {
                 for (Integer streetID : streetIDs) {
-                    neighbors = findNeighborIntersections(streetID, intersection);
+                    neighbors = findNeighborIntersections(streetID, intersection, clientNodePosition);
 
                     if (neighbors.size() > 0) {
                         if (!searchSpace.containsKey(intersection)) {
@@ -106,6 +114,7 @@ public class World {
             }
         }
 
+        //printSearchSpace(searchSpace);
         return searchSpace;
     };
 
