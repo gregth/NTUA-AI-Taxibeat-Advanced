@@ -8,7 +8,12 @@ public class Taxibeat {
         Client clientPosition = Client.parse();
 
         myWorld.parse();
-        HashMap<String, ArrayList<GraphNode>> searchSpace = myWorld.generateSearchSpace(clientPosition, fleet.get(0));
+        HashMap<GraphNode, ArrayList<GraphConnection>> searchSpace = myWorld.generateSearchSpace(clientPosition, fleet.get(0));
+
+        System.out.println("here");
+        for (GraphConnection conn : searchSpace.get(new GraphNode(new Position(6.0, 3.0)))) {
+            conn.print();
+        }
 
         Position driverPosition = myWorld.closestStreeNode(fleet.get(0));
 
@@ -23,36 +28,55 @@ public class Taxibeat {
         solve(searchSpace, driverPosition);
     }
 
-    private static void solve(HashMap<String, ArrayList<GraphNode>> searchSpace, Position startPosition) {
-        Comparator<GraphNode> comparators = new GraphNodeComparator();
-        PriorityQueue<GraphNode> queue = new PriorityQueue<GraphNode>(comparators);
+    private static void solve(HashMap<GraphNode, ArrayList<GraphConnection>> searchSpace, Position startPosition) {
+        Comparator<GraphConnection> comparator = new GraphConnectionComparator();
+        SortedSet<GraphConnection> queue = new TreeSet<GraphConnection>(comparator);
 
-        String startPositionString = startPosition.stringify();
-        for (GraphNode neighbor : searchSpace.get(startPositionString)) {
+        GraphNode startNode = new GraphNode(startPosition);
+        for (GraphConnection neighbor : searchSpace.get(startNode)) {
             queue.add(neighbor);
         }
 
-        GraphNode top;
+        GraphConnection top = null;
+        int maxFrontier = 3;
         while (queue.size() > 0) {
-            top = queue.poll();
-            if (top.isGoal()) {
+            top = queue.first();
+
+            top.getNode().setVisited();
+
+            if (top.getNode().isGoal()) {
                 System.out.println("FOUND THE CLIENT!!!");
                 break;
             }
 
-            for (GraphNode neighbor : searchSpace.get(top.getPosition())) {
-                if (!neighbor.isVisited()) {
-                    queue.add(neighbor);
-                    neighbor.setVisited();
-                }
+            top.print();
+            System.out.println(top.getTotalWeight());
+
+            for (GraphConnection neighbor : searchSpace.get(top.getNode())) {
+                queue.add(neighbor);
             }
+
+            queue.remove(top);
+
+            /*
+            while (queue.size() > maxFrontier) {
+                System.out.println("Removing");
+                queue.last().print();
+                queue.remove(queue.last());
+            }
+            */
+        }
+
+        if (top != null) {
+            // found the client
+            top.print();
         }
     }
 }
 
-class GraphNodeComparator implements Comparator<GraphNode> {
+class GraphConnectionComparator implements Comparator<GraphConnection> {
     @Override
-    public int compare(GraphNode a, GraphNode b) {
+    public int compare(GraphConnection a, GraphConnection b) {
         if (a.getTotalWeight() < b.getTotalWeight()) {
             return -1;
         }

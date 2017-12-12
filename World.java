@@ -18,7 +18,7 @@ public class World {
         return instance;
     }
 
-    private ArrayList<GraphNode> findNeighborIntersections(Integer streetID, String position, Position goalNode) {
+    private ArrayList<GraphConnection> findNeighborIntersections(Integer streetID, String position, Position goalNode) {
         ArrayList<Position> streetNodes = StreetsToNodes.get(streetID);
         Iterator<Position> streetNodesItr = streetNodes.iterator();
         Position prevIntersection = null, nextIntersection = null,
@@ -26,8 +26,9 @@ public class World {
         boolean foundIntersection = false;
         double distanceToPrev, distanceToNext, distanceToGoal;
         GraphNode prevGraphNode = null, nextGraphNode = null;
+        GraphConnection prevGraphConnection = null, nextGraphConnection = null;
 
-        ArrayList<GraphNode> neighbors = new ArrayList<GraphNode>();
+        ArrayList<GraphConnection> neighbors = new ArrayList<GraphConnection>();
         while (streetNodesItr.hasNext()) {
             currentNode = streetNodesItr.next();
             String currentNodeString = currentNode.stringify();
@@ -47,40 +48,55 @@ public class World {
         if (prevIntersection != null) {
             distanceToPrev = currentIntersection.distanceTo(prevIntersection);
             distanceToGoal = prevIntersection.distanceTo(goalNode);
-            prevGraphNode = new GraphNode(prevIntersection.stringify(), distanceToPrev, distanceToGoal);
+
+            prevGraphNode = new GraphNode(prevIntersection);
+            prevGraphConnection = new GraphConnection(
+                prevGraphNode,
+                streetID,
+                distanceToPrev,
+                distanceToGoal
+            );
             if (distanceToGoal == 0) {
                 prevGraphNode.setGoal();
             }
-            neighbors.add(prevGraphNode);
+            neighbors.add(prevGraphConnection);
         }
         if (nextIntersection != null) {
             distanceToNext = currentIntersection.distanceTo(nextIntersection);
             distanceToGoal = nextIntersection.distanceTo(goalNode);
-            nextGraphNode = new GraphNode(nextIntersection.stringify(), distanceToNext, distanceToGoal);
+
+            nextGraphNode = new GraphNode(nextIntersection);
+            nextGraphConnection = new GraphConnection(
+                nextGraphNode,
+                streetID,
+                distanceToNext,
+                distanceToGoal
+            );
             if (distanceToGoal == 0) {
                 nextGraphNode.setGoal();
             }
-            neighbors.add(nextGraphNode);
+            neighbors.add(nextGraphConnection);
         }
 
         return neighbors;
     }
 
-    private void printSearchSpace(HashMap<String, ArrayList<GraphNode>> searchSpace) {
-        ArrayList<GraphNode> neighbors;
-        for(String currentNode : searchSpace.keySet()) {
-            System.out.println("Neighbors of " + currentNode);
+    private void printSearchSpace(HashMap<GraphNode, ArrayList<GraphConnection>> searchSpace) {
+        ArrayList<GraphConnection> neighbors;
+        for(GraphNode currentNode : searchSpace.keySet()) {
+            System.out.println("Neighbors of ");
+            currentNode.print();
             neighbors = searchSpace.get(currentNode);
-            for (GraphNode neighbor : neighbors) {
+            for (GraphConnection neighbor : neighbors) {
                 neighbor.print();
             }
         }
     }
 
-    public HashMap<String, ArrayList<GraphNode>> generateSearchSpace(Client clientPosition, Taxi driverPosition) {
-        HashMap<String, ArrayList<GraphNode>> searchSpace = new HashMap<String, ArrayList<GraphNode>>();
+    public HashMap<GraphNode, ArrayList<GraphConnection>> generateSearchSpace(Client clientPosition, Taxi driverPosition) {
+        HashMap<GraphNode, ArrayList<GraphConnection>> searchSpace = new HashMap<GraphNode, ArrayList<GraphConnection>>();
         Set<Integer> streetIDs = null;
-        ArrayList<GraphNode> neighbors = null, buffer;
+        ArrayList<GraphConnection> neighbors = null, buffer;
 
         Position clientNodePosition = closestStreeNode(clientPosition);
         this.clientPosition = clientNodePosition;
@@ -96,25 +112,38 @@ public class World {
         }
 
 
+        Position intersectionPosition;
+        GraphNode intersectionNode;
         for (String intersection : Intersections) {
             streetIDs = NodesToStreets.get(intersection);
+
+            intersectionPosition = Position.parsePosition(intersection);
+            intersectionNode = new GraphNode(intersectionPosition);
+            if (intersection.equals(clientNodeString)) {
+                intersectionNode.setGoal();
+            }
             if (streetIDs != null) {
                 for (Integer streetID : streetIDs) {
                     neighbors = findNeighborIntersections(streetID, intersection, clientNodePosition);
 
                     if (neighbors.size() > 0) {
-                        if (!searchSpace.containsKey(intersection)) {
-                            searchSpace.put(intersection, new ArrayList<GraphNode>());
-                        }
+                        if (!searchSpace.containsKey(intersectionNode)) {
+                            searchSpace.put(intersectionNode, new ArrayList<GraphConnection>());
 
-                        buffer = searchSpace.get(intersection);
+                        }
+                        for (GraphConnection connection : neighbors) {
+                            if (!searchSpace.containsKey(connection.getNode())) {
+                                searchSpace.put(connection.getNode(), new ArrayList<GraphConnection>());
+                            }
+                        }
+                        buffer = searchSpace.get(intersectionNode);
                         buffer.addAll(neighbors);
                     }
                 }
             }
         }
 
-        //printSearchSpace(searchSpace);
+        printSearchSpace(searchSpace);
         return searchSpace;
     };
 
@@ -144,7 +173,7 @@ public class World {
         BufferedReader reader = null;
 
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/nodes.csv"))));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/mynodes.csv"))));
 
             double x, y, streetLength = 0, nodesDistance;
             int streetId = -1, previousStreetId = -1;
