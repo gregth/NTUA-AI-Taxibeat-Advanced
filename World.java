@@ -30,7 +30,7 @@ public class World {
         int streetId;
         ArrayList<Node> nodes = new ArrayList<Node>();
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/mynodes.csv"))));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/nodes.csv"))));
 
             reader.readLine(); // skip the first line with the captions
             while ((line = reader.readLine()) != null) {

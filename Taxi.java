@@ -21,7 +21,7 @@ public class Taxi extends Position {
         ArrayList<Taxi> fleet = new ArrayList<Taxi>();
 
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/mytaxis.csv"))));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/taxis.csv"))));
 
             double x, y;
             int id;
