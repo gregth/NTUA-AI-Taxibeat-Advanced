@@ -19,7 +19,7 @@ public class Client extends Position {
 
         Client position = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/client.csv"))));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/myclient.csv"))));
 
             double x, y;
             int id;

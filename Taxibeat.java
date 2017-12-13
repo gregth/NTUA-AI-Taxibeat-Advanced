@@ -7,64 +7,60 @@ public class Taxibeat {
         ArrayList<Taxi> fleet = Taxi.parse();
         Client clientPosition = Client.parse();
 
-        myWorld.parse();
-        HashMap<GraphNode, ArrayList<GraphConnection>> searchSpace = myWorld.generateSearchSpace(clientPosition, fleet.get(0));
+        ArrayList<Node> nodes = myWorld.parseNodes();
+        HashMap<String, ArrayList<GraphConnection>> searchSpace = myWorld.generateSearchSpace(nodes, clientPosition);
 
-        System.out.println("here");
-        for (GraphConnection conn : searchSpace.get(new GraphNode(new Position(6.0, 3.0)))) {
-            conn.print();
-        }
-
-        Position driverPosition = myWorld.closestStreeNode(fleet.get(0));
+        Position driverNode = myWorld.closestNode(nodes, fleet.get(0));
+        solve(searchSpace, driverNode);
 
         for (Taxi taxi : fleet) {
             //taxi.printTaxi();
         }
 
-        System.out.println("Client: ");
-        myWorld.clientPosition.print();
         String[] test = {"test"};
-        XMLFile.getInstance().write(test);
-        solve(searchSpace, driverPosition);
+        //XMLFile.getInstance().write(test);
     }
 
-    private static void solve(HashMap<GraphNode, ArrayList<GraphConnection>> searchSpace, Position startPosition) {
+    private static void solve(HashMap<String, ArrayList<GraphConnection>> searchSpace, Position startPosition) {
         Comparator<GraphConnection> comparator = new GraphConnectionComparator();
         SortedSet<GraphConnection> queue = new TreeSet<GraphConnection>(comparator);
+        Set<String> visited = new TreeSet<String>();
 
-        GraphNode startNode = new GraphNode(startPosition);
-        for (GraphConnection neighbor : searchSpace.get(startNode)) {
+        for (GraphConnection neighbor : searchSpace.get(startPosition.stringify())) {
             queue.add(neighbor);
         }
+        visited.add(startPosition.stringify());
 
+        System.out.println("SOLVING");
         GraphConnection top = null;
-        int maxFrontier = 3;
+        int maxFrontier = 5;
         while (queue.size() > 0) {
             top = queue.first();
 
-            top.getNode().setVisited();
+            System.out.println("At ");
+            top.print();
+            visited.add(top.getNode());
 
-            if (top.getNode().isGoal()) {
+            if (top.isGoal()) {
                 System.out.println("FOUND THE CLIENT!!!");
                 break;
             }
 
-            top.print();
-            System.out.println(top.getTotalWeight());
-
             for (GraphConnection neighbor : searchSpace.get(top.getNode())) {
-                queue.add(neighbor);
+                if (!visited.contains(neighbor.getNode())) {
+                    System.out.println("Adding");
+                    neighbor.print();
+                    queue.add(neighbor);
+                }
             }
 
             queue.remove(top);
 
-            /*
             while (queue.size() > maxFrontier) {
                 System.out.println("Removing");
                 queue.last().print();
                 queue.remove(queue.last());
             }
-            */
         }
 
         if (top != null) {

@@ -1,17 +1,23 @@
 public class GraphConnection {
-    private GraphNode node;
-    private Integer streetID;
+    private String node;
     private double weight;
     private double h;
 
-    public GraphConnection(GraphNode node, Integer streetID, double weight, double h) {
+    public GraphConnection(String node, double weight, double h) {
         this.node = node;
-        this.streetID = streetID;
         this.weight = weight;
         this.h = h;
     }
 
-    public GraphNode getNode() {
+    public void setHeuristic(double h) {
+        this.h = h;
+    }
+
+    public boolean isGoal() {
+        return this.h == 0;
+    }
+
+    public String getNode() {
         return node;
     }
 
@@ -20,6 +26,6 @@ public class GraphConnection {
     }
 
     public void print() {
-        System.out.println("('" + node.getPosition().stringify() + ", " + this.weight + ", " + this.h + ")");
+        System.out.println("('" + node + ", " + this.weight + ", " + this.h + ")");
     }
 }
