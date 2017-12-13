@@ -11,7 +11,9 @@ public class Taxibeat {
         HashMap<String, ArrayList<GraphConnection>> searchSpace = myWorld.generateSearchSpace(nodes, clientPosition);
 
         Position driverNode = myWorld.closestNode(nodes, fleet.get(0));
-        solve(searchSpace, driverNode);
+        Route route = findRoute(searchSpace, driverNode);
+
+        route.print();
 
         for (Taxi taxi : fleet) {
             //taxi.printTaxi();
@@ -21,7 +23,7 @@ public class Taxibeat {
         //XMLFile.getInstance().write(test);
     }
 
-    private static void solve(HashMap<String, ArrayList<GraphConnection>> searchSpace, Position startPosition) {
+    private static Route findRoute(HashMap<String, ArrayList<GraphConnection>> searchSpace, Position startPosition) {
         Comparator<FrontierNode> comparator = new FrontierNodeComparator();
         SortedSet<FrontierNode> queue = new TreeSet<FrontierNode>(comparator);
         Set<String> visited = new TreeSet<String>();
@@ -50,6 +52,7 @@ public class Taxibeat {
             for (GraphConnection neighbor : searchSpace.get(top.getConnection().getNode())) {
                 if (!visited.contains(neighbor.getNode())) {
                     frontier = new FrontierNode(neighbor);
+                    frontier.setCost(top.getRouteCost() + neighbor.getWeight());
                     route = frontier.getRoute();
                     route.addAll(top.getRoute());
                     route.add(top.getConnection().getNode());
@@ -68,8 +71,11 @@ public class Taxibeat {
         if (top != null) {
             // found the client
             top.getConnection().print();
-            top.printRoute();
+            top.getRoute().add(top.getConnection().getNode());
+            return new Route(top.getRoute(), top.getRouteCost());
         }
+
+        return null;
     }
 }
 

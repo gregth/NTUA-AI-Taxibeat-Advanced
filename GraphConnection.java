@@ -21,6 +21,10 @@ public class GraphConnection {
         return node;
     }
 
+    public double getWeight() {
+        return weight;
+    }
+
     public double getTotalWeight() {
         return weight + h;
     }
