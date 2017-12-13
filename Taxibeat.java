@@ -22,62 +22,65 @@ public class Taxibeat {
     }
 
     private static void solve(HashMap<String, ArrayList<GraphConnection>> searchSpace, Position startPosition) {
-        Comparator<GraphConnection> comparator = new GraphConnectionComparator();
-        SortedSet<GraphConnection> queue = new TreeSet<GraphConnection>(comparator);
+        Comparator<FrontierNode> comparator = new FrontierNodeComparator();
+        SortedSet<FrontierNode> queue = new TreeSet<FrontierNode>(comparator);
         Set<String> visited = new TreeSet<String>();
 
         for (GraphConnection neighbor : searchSpace.get(startPosition.stringify())) {
-            queue.add(neighbor);
+            queue.add(new FrontierNode(neighbor, startPosition.stringify()));
         }
         visited.add(startPosition.stringify());
 
         System.out.println("SOLVING");
-        GraphConnection top = null;
+        FrontierNode top = null;
+        FrontierNode frontier;
+        ArrayList<String> route;
         int maxFrontier = 5;
         while (queue.size() > 0) {
             top = queue.first();
 
-            System.out.println("At ");
-            top.print();
-            visited.add(top.getNode());
+            visited.add(top.getConnection().getNode());
 
-            if (top.isGoal()) {
+            if (top.getConnection().isGoal()) {
                 System.out.println("FOUND THE CLIENT!!!");
                 break;
             }
 
-            for (GraphConnection neighbor : searchSpace.get(top.getNode())) {
+
+            for (GraphConnection neighbor : searchSpace.get(top.getConnection().getNode())) {
                 if (!visited.contains(neighbor.getNode())) {
-                    System.out.println("Adding");
-                    neighbor.print();
-                    queue.add(neighbor);
+                    frontier = new FrontierNode(neighbor);
+                    route = frontier.getRoute();
+                    route.addAll(top.getRoute());
+                    route.add(top.getConnection().getNode());
+
+                    queue.add(frontier);
                 }
             }
 
             queue.remove(top);
 
             while (queue.size() > maxFrontier) {
-                System.out.println("Removing");
-                queue.last().print();
                 queue.remove(queue.last());
             }
         }
 
         if (top != null) {
             // found the client
-            top.print();
+            top.getConnection().print();
+            top.printRoute();
         }
     }
 }
 
-class GraphConnectionComparator implements Comparator<GraphConnection> {
+class FrontierNodeComparator implements Comparator<FrontierNode> {
     @Override
-    public int compare(GraphConnection a, GraphConnection b) {
-        if (a.getTotalWeight() < b.getTotalWeight()) {
+    public int compare(FrontierNode a, FrontierNode b) {
+        if (a.getConnection().getTotalWeight() < b.getConnection().getTotalWeight()) {
             return -1;
         }
 
-        if (a.getTotalWeight() > b.getTotalWeight()) {
+        if (a.getConnection().getTotalWeight() > b.getConnection().getTotalWeight()) {
             return 1;
         }
 
