@@ -10,16 +10,12 @@ import javax.xml.transform.OutputKeys;
 import java.util.*;
 
 public class XMLFile {
-    private static final XMLFile instance = new XMLFile();
     private Document doc;
     private Transformer transformer;
     private DOMSource source;
     private StreamResult consoleResult;
     private StreamResult result;
-    public static XMLFile getInstance() {
-        return instance;
-    }
-    private XMLFile() {
+    public XMLFile(String filename) {
         try {
 	        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -32,7 +28,7 @@ public class XMLFile {
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
 			source = new DOMSource(doc);
-			result = new StreamResult(new File("out.kml"));
+			result = new StreamResult(new File(filename));
 
 			// Output to console for testing
 			consoleResult = new StreamResult(System.out);

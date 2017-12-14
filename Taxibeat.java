@@ -10,25 +10,29 @@ public class Taxibeat {
         myWorld.parseNodes();
         HashMap<String, ArrayList<GraphEdge>> searchSpace = myWorld.generateSearchSpace(clientPosition);
 
+        int maxFrontier = Integer.valueOf(args[0]);
+
         Comparator<Route> routeComparator = new RouteComparator();
         SortedSet<Route> routes = new TreeSet<Route>(routeComparator);
         double minRouteDistance = -1;
+        System.out.println("DriverID, Steps, ActualMaxFrontier, MaxFrontier");
+
         for (Taxi taxi : fleet) {
             Node driverNode = myWorld.closestNode(taxi);
-            Route route = findRoute(searchSpace, driverNode);
-            //route.print();
+            System.out.print(taxi.getId() + ",");
+            Route route = findRoute(searchSpace, driverNode, maxFrontier);
             if (route != null) {
                 route.assignDriver(taxi);
                 routes.add(route);
             }
         }
-        System.out.println("min");
-        XMLFile.getInstance().write(routes);
+        XMLFile outFile = new XMLFile("output/out" + maxFrontier + ".kml");
+        outFile.write(routes);
     }
 
-    private static Route findRoute(HashMap<String, ArrayList<GraphEdge>> searchSpace, Position startPosition) {
+    private static Route findRoute(HashMap<String, ArrayList<GraphEdge>> searchSpace, Position startPosition, int maxFrontier) {
         Comparator<FrontierNode> comparator = new FrontierNodeComparator();
-        SortedSet<FrontierNode> queue = new TreeSet<FrontierNode>(comparator);
+        PriorityQueue<FrontierNode> queue = new PriorityQueue<FrontierNode>(10, comparator);
         Set<String> visited = new TreeSet<String>();
 
         for (GraphEdge neighbor : searchSpace.get(startPosition.stringify())) {
@@ -36,20 +40,24 @@ public class Taxibeat {
         }
         visited.add(startPosition.stringify());
 
-        System.out.println("SOLVING");
         FrontierNode top = null;
         FrontierNode frontier;
         ArrayList<String> route;
-        int maxFrontier = 5;
+        int counter, stepsCounter = 0, actualMaxFrontier = 0;
         boolean foundRoute = false;
+        PriorityQueue<FrontierNode> cloneQueue;
         while (queue.size() > 0) {
-            top = queue.first();
+            if (queue.size() > actualMaxFrontier) {
+                actualMaxFrontier = queue.size();
+            }
+
+            ++stepsCounter;
+            top = queue.poll();
 
             visited.add(top.getEdge().getNode());
 
             if (top.getEdge().isGoal()) {
                 foundRoute = true;
-                System.out.println("FOUND THE CLIENT!!!");
                 break;
             }
 
@@ -62,20 +70,43 @@ public class Taxibeat {
                     route.addAll(top.getRoute());
                     route.add(top.getEdge().getNode());
 
-                    queue.add(frontier);
+                    if (queue.contains(frontier)) {
+                        // Check if the same neighbor is already inside the frontier
+                        Iterator<FrontierNode> iterator = queue.iterator();
+                        while (iterator.hasNext()) {
+                            // Find the neighbor in the frontier to compare the cost
+                            FrontierNode currentNode = iterator.next();
+                            if (currentNode.getEdge().getNode().equals(neighbor.getNode())) {
+                                if (currentNode.getRouteCost() > frontier.getRouteCost()) {
+                                    // if the cost of reaching the neigbor from the current node
+                                    // is less, replace the old one from the frontier
+                                    queue.remove(currentNode);
+                                    queue.add(frontier);
+                                }
+                                break;
+                            }
+                        }
+                    } else {
+                        queue.add(frontier);
+                    }
                 }
             }
 
-            queue.remove(top);
-
-            while (queue.size() > maxFrontier) {
-                queue.remove(queue.last());
+            if (queue.size() > maxFrontier) {
+                cloneQueue = new PriorityQueue<FrontierNode>(10, comparator);
+                counter = maxFrontier;
+                while (counter > 0) {
+                    cloneQueue.add(queue.poll());
+                    --counter;
+                }
+                queue = cloneQueue;
             }
         }
 
         if (foundRoute) {
-            // found the client
-            top.getEdge().print();
+            System.out.print(stepsCounter + ",");
+            System.out.print(actualMaxFrontier + ",");
+            System.out.print(maxFrontier + "\n");
             top.getRoute().add(top.getEdge().getNode());
             return new Route(top.getRoute(), top.getRouteCost());
         }
