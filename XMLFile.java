@@ -91,7 +91,7 @@ public class XMLFile {
     }
 
 
-    public void write(ArrayList<String> routeNodes) {
+    public void write(ArrayList<Route> routes) {
         try {
             // <kml>
             Element rootElement = doc.createElement("kml");
@@ -111,8 +111,9 @@ public class XMLFile {
 
             docElement.appendChild(createStyleElement("green", "ff009900"));
             docElement.appendChild(createStyleElement("red", "ff0000ff"));
-            docElement.appendChild(createPlacemarkElement("Taxi 1", "green", routeNodes));
-
+            for (Route route : routes) {
+                docElement.appendChild(createPlacemarkElement("Taxi 1", "green", route.getNodesString()));
+            }
 
 			transformer.transform(source, result);
 			System.out.println("File saved!");

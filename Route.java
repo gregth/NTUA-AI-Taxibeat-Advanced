@@ -16,7 +16,7 @@ class Route {
         System.out.println("\nCost: " + cost);
     }
 
-    public void writeToXML() {
-        XMLFile.getInstance().write(nodes);
+    public ArrayList<String> getNodesString() {
+        return nodes;
     }
 }

@@ -10,15 +10,16 @@ public class Taxibeat {
         ArrayList<Node> nodes = myWorld.parseNodes();
         HashMap<String, ArrayList<GraphConnection>> searchSpace = myWorld.generateSearchSpace(nodes, clientPosition);
 
-        Position driverNode = myWorld.closestNode(nodes, fleet.get(0));
-        Route route = findRoute(searchSpace, driverNode);
 
-        route.print();
-
+        ArrayList<Route> routes = new ArrayList<Route>();
         for (Taxi taxi : fleet) {
+            Position driverNode = myWorld.closestNode(nodes, taxi);
+            Route route = findRoute(searchSpace, driverNode);
+            //route.print();
+            routes.add(route);
             //taxi.printTaxi();
         }
-        route.writeToXML();
+        XMLFile.getInstance().write(routes);
 
     }
 
