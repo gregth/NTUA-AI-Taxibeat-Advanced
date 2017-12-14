@@ -13,7 +13,7 @@ public class World {
         return instance;
     }
 
-    private void printSearchSpaceAlt(HashMap<String, ArrayList<GraphEdge>> searchSpace) {
+    private void printSearchSpace(HashMap<String, ArrayList<GraphEdge>> searchSpace) {
         ArrayList<GraphEdge> neighbors;
         for(String currentNode : searchSpace.keySet()) {
             System.out.println("Neighbors of " + currentNode);
@@ -107,7 +107,7 @@ public class World {
             previousNode = currentNode;
         }
 
-        //printSearchSpaceAlt(newSearchSpace);
+        //printSearchSpace(newSearchSpace);
         return newSearchSpace;
     }
 
