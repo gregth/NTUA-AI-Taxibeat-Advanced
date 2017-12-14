@@ -22,13 +22,12 @@ public class Taxibeat {
                 routes.add(route);
             }
         }
-        System.out.println("min");
         XMLFile.getInstance().write(routes);
     }
 
     private static Route findRoute(HashMap<String, ArrayList<GraphEdge>> searchSpace, Position startPosition) {
         Comparator<FrontierNode> comparator = new FrontierNodeComparator();
-        SortedSet<FrontierNode> queue = new TreeSet<FrontierNode>(comparator);
+        PriorityQueue<FrontierNode> queue = new PriorityQueue<FrontierNode>(10, comparator);
         Set<String> visited = new TreeSet<String>();
 
         for (GraphEdge neighbor : searchSpace.get(startPosition.stringify())) {
@@ -36,20 +35,19 @@ public class Taxibeat {
         }
         visited.add(startPosition.stringify());
 
-        System.out.println("SOLVING");
         FrontierNode top = null;
         FrontierNode frontier;
         ArrayList<String> route;
-        int maxFrontier = 5;
+        int maxFrontier = 10, counter;
         boolean foundRoute = false;
+        PriorityQueue<FrontierNode> cloneQueue;
         while (queue.size() > 0) {
-            top = queue.first();
+            top = queue.poll();
 
             visited.add(top.getEdge().getNode());
 
             if (top.getEdge().isGoal()) {
                 foundRoute = true;
-                System.out.println("FOUND THE CLIENT!!!");
                 break;
             }
 
@@ -66,16 +64,18 @@ public class Taxibeat {
                 }
             }
 
-            queue.remove(top);
-
-            while (queue.size() > maxFrontier) {
-                queue.remove(queue.last());
+            if (queue.size() > maxFrontier) {
+                cloneQueue = new PriorityQueue<FrontierNode>(10, comparator); 
+                counter = maxFrontier;
+                while (counter > 0) {
+                    cloneQueue.add(queue.poll());
+                    --counter;
+                }
+                queue = cloneQueue;
             }
         }
 
         if (foundRoute) {
-            // found the client
-            top.getEdge().print();
             top.getRoute().add(top.getEdge().getNode());
             return new Route(top.getRoute(), top.getRouteCost());
         }
@@ -87,11 +87,14 @@ public class Taxibeat {
 class FrontierNodeComparator implements Comparator<FrontierNode> {
     @Override
     public int compare(FrontierNode a, FrontierNode b) {
-        if (a.getEdge().getTotalWeight() < b.getEdge().getTotalWeight()) {
+        double aG = a.getRouteCost(), bG = b.getRouteCost();
+        double aH = a.getEdge().getHeuristic(), bH = b.getEdge().getHeuristic();
+
+        if (aG + aH < bG + bH) {
             return -1;
         }
 
-        if (a.getEdge().getTotalWeight() > b.getEdge().getTotalWeight()) {
+        if (aG + aH > bG + bH) {
             return 1;
         }
 

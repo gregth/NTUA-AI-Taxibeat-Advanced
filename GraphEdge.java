@@ -21,6 +21,10 @@ public class GraphEdge {
         return weight;
     }
 
+    public double getHeuristic() {
+        return h;
+    }
+
     public double getTotalWeight() {
         return weight + h;
     }
