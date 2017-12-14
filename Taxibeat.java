@@ -16,7 +16,9 @@ public class Taxibeat {
             Position driverNode = myWorld.closestNode(nodes, taxi);
             Route route = findRoute(searchSpace, driverNode);
             //route.print();
-            routes.add(route);
+            if (route != null) {
+                routes.add(route);
+            }
             //taxi.printTaxi();
         }
         XMLFile.getInstance().write(routes);
@@ -38,12 +40,14 @@ public class Taxibeat {
         FrontierNode frontier;
         ArrayList<String> route;
         int maxFrontier = 5;
+        boolean foundRoute = false;
         while (queue.size() > 0) {
             top = queue.first();
 
             visited.add(top.getConnection().getNode());
 
             if (top.getConnection().isGoal()) {
+                foundRoute = true;
                 System.out.println("FOUND THE CLIENT!!!");
                 break;
             }
@@ -68,7 +72,7 @@ public class Taxibeat {
             }
         }
 
-        if (top != null) {
+        if (foundRoute) {
             // found the client
             top.getConnection().print();
             top.getRoute().add(top.getConnection().getNode());
