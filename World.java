@@ -2,9 +2,13 @@ import java.io.*;
 import java.util.*;
 
 public class World {
+    private ArrayList<Node> nodes;
+
     // Make Singleton Instance of the World Class
     private static final World instance = new World();
-    private World() {};
+    private World() {
+        nodes = new ArrayList<Node>();
+    };
     public static World getInstance() {
         return instance;
     }
@@ -21,14 +25,13 @@ public class World {
         }
     }
 
-    public ArrayList<Node> parseNodes() {
+    public void parseNodes() {
         BufferedReader reader = null;
 
         String line = null, streetName;
         String[] parts = null;
         double x, y;
         int streetId;
-        ArrayList<Node> nodes = new ArrayList<Node>();
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/nodes.csv"))));
 
@@ -57,26 +60,21 @@ public class World {
                 }
             }
         }
-
-        return nodes;
     }
 
-    public HashMap<String, ArrayList<GraphConnection>> generateSearchSpace(ArrayList<Node> nodes, Client clientPosition) {
+    public HashMap<String, ArrayList<GraphConnection>> generateSearchSpace(Client clientPosition) {
         HashMap<String, ArrayList<GraphConnection>> newSearchSpace = new HashMap<String, ArrayList<GraphConnection>>();
 
-        double nodesDistance, distanceToClient, minDistanceToClient = -1;
+        double nodesDistance;
         int previousStreetId = -1;
         String streetName = null;
-        Node previousNode = null, targetNode = null;
+        Node previousNode = null;
+
+        // Find the closet node to client Position
+        Node targetNode = closestNode(clientPosition);
 
         ArrayList<GraphConnection> neighbors;
         for (Node currentNode : nodes) {
-            distanceToClient = currentNode.distanceTo(clientPosition);
-            if (distanceToClient < minDistanceToClient || minDistanceToClient == -1) {
-                minDistanceToClient = distanceToClient;
-                targetNode = currentNode;
-            }
-
             if (!newSearchSpace.containsKey(currentNode.stringify())) {
                 //System.out.println("New node " + currentPosition.stringify());
                 newSearchSpace.put(currentNode.stringify(), new ArrayList<GraphConnection>());
@@ -94,14 +92,14 @@ public class World {
                     neighbors.add(new GraphConnection(
                         previousNode.stringify(),
                         nodesDistance,
-                        0
+                        previousNode.distanceTo(targetNode)
                     ));
-                    
+
                     neighbors = newSearchSpace.get(previousNode.stringify());
                     neighbors.add(new GraphConnection(
                         currentNode.stringify(),
                         nodesDistance,
-                        0
+                        currentNode.distanceTo(targetNode)
                     ));
                 }
             }
@@ -109,28 +107,14 @@ public class World {
             previousNode = currentNode;
         }
 
-        fixHeuristics(newSearchSpace, targetNode);
-
         //printSearchSpaceAlt(newSearchSpace);
         return newSearchSpace;
     }
 
-    private void fixHeuristics(HashMap<String, ArrayList<GraphConnection>> searchSpace, Position targetNode) {
-        ArrayList<GraphConnection> neighbors;
-        Position nodePosition;
-        for (String node : searchSpace.keySet()) {
-            neighbors = searchSpace.get(node);
-            for (GraphConnection neighbor : neighbors){
-                nodePosition = Position.parsePosition(neighbor.getNode());
-                neighbor.setHeuristic(nodePosition.distanceTo(targetNode));
-            }
-        }
-    }
-
-    public Position closestNode(ArrayList<Node> nodes, Position position) {
+    public Node closestNode(Position position) {
         double minDistance = -1, distance;
-        Position closest = null;
-        for (Node currentNode : nodes) { 
+        Node closest = null;
+        for (Node currentNode : nodes) {
             distance = currentNode.distanceTo(position);
             if (minDistance == -1 || distance < minDistance) {
                 minDistance = distance;

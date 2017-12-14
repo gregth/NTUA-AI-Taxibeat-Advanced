@@ -7,15 +7,14 @@ public class Taxibeat {
         ArrayList<Taxi> fleet = Taxi.parse();
         Client clientPosition = Client.parse();
 
-        ArrayList<Node> nodes = myWorld.parseNodes();
-        HashMap<String, ArrayList<GraphConnection>> searchSpace = myWorld.generateSearchSpace(nodes, clientPosition);
-
+        myWorld.parseNodes();
+        HashMap<String, ArrayList<GraphConnection>> searchSpace = myWorld.generateSearchSpace(clientPosition);
 
         Comparator<Route> routeComparator = new RouteComparator();
         SortedSet<Route> routes = new TreeSet<Route>(routeComparator);
         double minRouteDistance = -1;
         for (Taxi taxi : fleet) {
-            Position driverNode = myWorld.closestNode(nodes, taxi);
+            Node driverNode = myWorld.closestNode(taxi);
             Route route = findRoute(searchSpace, driverNode);
             //route.print();
             if (route != null) {

@@ -9,10 +9,6 @@ public class GraphConnection {
         this.h = h;
     }
 
-    public void setHeuristic(double h) {
-        this.h = h;
-    }
-
     public boolean isGoal() {
         return this.h == 0;
     }
