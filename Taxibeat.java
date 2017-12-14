@@ -11,18 +11,20 @@ public class Taxibeat {
         HashMap<String, ArrayList<GraphConnection>> searchSpace = myWorld.generateSearchSpace(nodes, clientPosition);
 
 
-        ArrayList<Route> routes = new ArrayList<Route>();
+        Comparator<Route> routeComparator = new RouteComparator();
+        SortedSet<Route> routes = new TreeSet<Route>(routeComparator);
+        double minRouteDistance = -1;
         for (Taxi taxi : fleet) {
             Position driverNode = myWorld.closestNode(nodes, taxi);
             Route route = findRoute(searchSpace, driverNode);
             //route.print();
             if (route != null) {
+                route.assignDriver(taxi);
                 routes.add(route);
             }
-            //taxi.printTaxi();
         }
+        System.out.println("min");
         XMLFile.getInstance().write(routes);
-
     }
 
     private static Route findRoute(HashMap<String, ArrayList<GraphConnection>> searchSpace, Position startPosition) {
@@ -91,6 +93,21 @@ class FrontierNodeComparator implements Comparator<FrontierNode> {
         }
 
         if (a.getConnection().getTotalWeight() > b.getConnection().getTotalWeight()) {
+            return 1;
+        }
+
+        return 0;
+    }
+}
+
+class RouteComparator implements Comparator<Route> {
+    @Override
+    public int compare(Route a, Route b) {
+        if (a.getCost() < b.getCost()) {
+            return -1;
+        }
+
+        if (a.getCost() > b.getCost()) {
             return 1;
         }
 

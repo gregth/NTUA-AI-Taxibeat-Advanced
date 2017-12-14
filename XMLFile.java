@@ -46,16 +46,17 @@ public class XMLFile {
         Element style = doc.createElement("Style");
         Attr attrType = doc.createAttribute("id");
         attrType.setValue(styleName);
-        Element lineStyle = doc.createElement("Linestyle");
+        style.setAttributeNode(attrType);
+        Element lineStyle = doc.createElement("LineStyle");
         style.appendChild(lineStyle);
 
         Element colorElement = doc.createElement("color");
         colorElement.appendChild(doc.createTextNode(color));
-        style.appendChild(colorElement);
+        lineStyle.appendChild(colorElement);
 
         Element widthElement = doc.createElement("width");
         widthElement.appendChild(doc.createTextNode("4"));
-        style.appendChild(widthElement);
+        lineStyle.appendChild(widthElement);
 
         return style;
     }
@@ -91,7 +92,7 @@ public class XMLFile {
     }
 
 
-    public void write(ArrayList<Route> routes) {
+    public void write(SortedSet<Route> routes) {
         try {
             // <kml>
             Element rootElement = doc.createElement("kml");
@@ -111,9 +112,16 @@ public class XMLFile {
 
             docElement.appendChild(createStyleElement("green", "ff009900"));
             docElement.appendChild(createStyleElement("red", "ff0000ff"));
-            for (Route route : routes) {
-                docElement.appendChild(createPlacemarkElement("Taxi 1", "green", route.getNodesString()));
+
+            Iterator<Route> iterator = routes.iterator();
+            iterator.next(); // add the shortest path last
+            Route route;
+            while (iterator.hasNext()) {
+                route = iterator.next();
+                docElement.appendChild(createPlacemarkElement("Taxi " + route.getDriver().getId(), "red", route.getNodesString()));
             }
+            docElement.appendChild(createPlacemarkElement("Taxi " + routes.first().getDriver().getId(), "green", routes.first().getNodesString()));
+            routes.remove(routes.first());
 
 			transformer.transform(source, result);
 			System.out.println("File saved!");

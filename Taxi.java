@@ -16,6 +16,10 @@ public class Taxi extends Position {
         this.print();
     }
 
+    public int getId() {
+        return id;
+    }
+
     public static ArrayList<Taxi> parse() {
         BufferedReader reader = null;
         ArrayList<Taxi> fleet = new ArrayList<Taxi>();
