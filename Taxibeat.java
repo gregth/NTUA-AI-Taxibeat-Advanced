@@ -83,33 +83,3 @@ public class Taxibeat {
         return null;
     }
 }
-
-class FrontierNodeComparator implements Comparator<FrontierNode> {
-    @Override
-    public int compare(FrontierNode a, FrontierNode b) {
-        if (a.getEdge().getTotalWeight() < b.getEdge().getTotalWeight()) {
-            return -1;
-        }
-
-        if (a.getEdge().getTotalWeight() > b.getEdge().getTotalWeight()) {
-            return 1;
-        }
-
-        return 0;
-    }
-}
-
-class RouteComparator implements Comparator<Route> {
-    @Override
-    public int compare(Route a, Route b) {
-        if (a.getCost() < b.getCost()) {
-            return -1;
-        }
-
-        if (a.getCost() > b.getCost()) {
-            return 1;
-        }
-
-        return 0;
-    }
-}
