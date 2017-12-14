@@ -7,7 +7,6 @@ public class Taxi extends Position {
 
     public Taxi(int id, double x, double y) {
         super(x, y);
-
         this.id = id;
     }
 
