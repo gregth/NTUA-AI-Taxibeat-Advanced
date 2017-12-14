@@ -40,4 +40,24 @@ class FrontierNode {
         }
         System.out.println("\nCost: " + this.routeCost);
     }
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+
+        if (obj == this) {
+            return true;
+        }
+
+		final FrontierNode other = (FrontierNode) obj;
+
+        return other.getEdge().getNode().equals(this.getEdge().getNode());
+	}
+
+	@Override
+	public int hashCode() {
+        return Objects.hash(this.getEdge().getNode());
+	}
 }
