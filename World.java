@@ -63,7 +63,7 @@ public class World {
     }
 
     public HashMap<String, ArrayList<GraphEdge>> generateSearchSpace(Client clientPosition) {
-        HashMap<String, ArrayList<GraphEdge>> newSearchSpace = new HashMap<String, ArrayList<GraphEdge>>();
+        HashMap<String, ArrayList<GraphEdge>> searchSpace = new HashMap<String, ArrayList<GraphEdge>>();
 
         double nodesDistance;
         int previousStreetId = -1;
@@ -75,27 +75,34 @@ public class World {
 
         ArrayList<GraphEdge> neighbors;
         for (Node currentNode : nodes) {
-            if (!newSearchSpace.containsKey(currentNode.stringify())) {
-                //System.out.println("New node " + currentPosition.stringify());
-                newSearchSpace.put(currentNode.stringify(), new ArrayList<GraphEdge>());
+            if (!searchSpace.containsKey(currentNode.stringify())) {
+                // Insert new node in search space
+                searchSpace.put(currentNode.stringify(), new ArrayList<GraphEdge>());
             }
 
             // Check if we are parsing a new street
-            if (previousStreetId != currentNode.getStreetID()) { // new street
+            if (previousStreetId != currentNode.getStreetID()) {
+                // New street
                 previousStreetId = currentNode.getStreetID();
-            } else { // same street, calculate distance to neighbors
-                neighbors = newSearchSpace.get(currentNode.stringify());
+            } else {
+                // Same street, calculate distance to neighbors
 
                 if (previousNode != null) {
                     nodesDistance = previousNode.distanceTo(currentNode);
 
+                    // Let A = previousNode, B = currentNode, then add the edge AB
+                    // in the neighbors set of both A and B.
+
+                    // Include A in the neighbors of B
+                    neighbors = searchSpace.get(currentNode.stringify());
                     neighbors.add(new GraphEdge(
                         previousNode.stringify(),
                         nodesDistance,
                         previousNode.distanceTo(targetNode)
                     ));
 
-                    neighbors = newSearchSpace.get(previousNode.stringify());
+                    // Include B in the neighbors of A
+                    neighbors = searchSpace.get(previousNode.stringify());
                     neighbors.add(new GraphEdge(
                         currentNode.stringify(),
                         nodesDistance,
@@ -107,8 +114,8 @@ public class World {
             previousNode = currentNode;
         }
 
-        //printSearchSpace(newSearchSpace);
-        return newSearchSpace;
+        //printSearchSpace(searchSpace);
+        return searchSpace;
     }
 
     public Node closestNode(Position position) {
