@@ -1,25 +1,25 @@
 import java.util.*;
 
 class FrontierNode {
-    private GraphConnection connection;
+    private GraphEdge edge;
     private ArrayList<String> route;
     private double routeCost;
 
-    public FrontierNode(GraphConnection connection, String prevNode) {
-       this.connection = connection;
+    public FrontierNode(GraphEdge edge, String prevNode) {
+       this.edge = edge;
        this.route = new ArrayList<String>();
        this.route.add(prevNode);
-       this.routeCost = connection.getWeight();
+       this.routeCost = edge.getWeight();
     }
 
-    public FrontierNode(GraphConnection connection) {
-       this.connection = connection;
+    public FrontierNode(GraphEdge edge) {
+       this.edge = edge;
        this.route = new ArrayList<String>();
        this.routeCost = 0;
     }
 
-    public GraphConnection getConnection() {
-        return connection;
+    public GraphEdge getEdge() {
+        return edge;
     }
 
     public void setCost(double routeCost) {

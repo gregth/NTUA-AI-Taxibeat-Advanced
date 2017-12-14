@@ -13,13 +13,13 @@ public class World {
         return instance;
     }
 
-    private void printSearchSpaceAlt(HashMap<String, ArrayList<GraphConnection>> searchSpace) {
-        ArrayList<GraphConnection> neighbors;
+    private void printSearchSpaceAlt(HashMap<String, ArrayList<GraphEdge>> searchSpace) {
+        ArrayList<GraphEdge> neighbors;
         for(String currentNode : searchSpace.keySet()) {
             System.out.println("Neighbors of " + currentNode);
 
             neighbors = searchSpace.get(currentNode);
-            for (GraphConnection neighbor : neighbors) {
+            for (GraphEdge neighbor : neighbors) {
                 neighbor.print();
             }
         }
@@ -62,8 +62,8 @@ public class World {
         }
     }
 
-    public HashMap<String, ArrayList<GraphConnection>> generateSearchSpace(Client clientPosition) {
-        HashMap<String, ArrayList<GraphConnection>> newSearchSpace = new HashMap<String, ArrayList<GraphConnection>>();
+    public HashMap<String, ArrayList<GraphEdge>> generateSearchSpace(Client clientPosition) {
+        HashMap<String, ArrayList<GraphEdge>> newSearchSpace = new HashMap<String, ArrayList<GraphEdge>>();
 
         double nodesDistance;
         int previousStreetId = -1;
@@ -73,11 +73,11 @@ public class World {
         // Find the closet node to client Position
         Node targetNode = closestNode(clientPosition);
 
-        ArrayList<GraphConnection> neighbors;
+        ArrayList<GraphEdge> neighbors;
         for (Node currentNode : nodes) {
             if (!newSearchSpace.containsKey(currentNode.stringify())) {
                 //System.out.println("New node " + currentPosition.stringify());
-                newSearchSpace.put(currentNode.stringify(), new ArrayList<GraphConnection>());
+                newSearchSpace.put(currentNode.stringify(), new ArrayList<GraphEdge>());
             }
 
             // Check if we are parsing a new street
@@ -89,14 +89,14 @@ public class World {
                 if (previousNode != null) {
                     nodesDistance = previousNode.distanceTo(currentNode);
 
-                    neighbors.add(new GraphConnection(
+                    neighbors.add(new GraphEdge(
                         previousNode.stringify(),
                         nodesDistance,
                         previousNode.distanceTo(targetNode)
                     ));
 
                     neighbors = newSearchSpace.get(previousNode.stringify());
-                    neighbors.add(new GraphConnection(
+                    neighbors.add(new GraphEdge(
                         currentNode.stringify(),
                         nodesDistance,
                         currentNode.distanceTo(targetNode)

@@ -1,9 +1,9 @@
-public class GraphConnection {
+public class GraphEdge {
     private String node;
     private double weight;
     private double h;
 
-    public GraphConnection(String node, double weight, double h) {
+    public GraphEdge(String node, double weight, double h) {
         this.node = node;
         this.weight = weight;
         this.h = h;
