@@ -18,9 +18,8 @@ public class Taxibeat {
         for (Taxi taxi : fleet) {
             //taxi.printTaxi();
         }
+        route.writeToXML();
 
-        String[] test = {"test"};
-        //XMLFile.getInstance().write(test);
     }
 
     private static Route findRoute(HashMap<String, ArrayList<GraphConnection>> searchSpace, Position startPosition) {

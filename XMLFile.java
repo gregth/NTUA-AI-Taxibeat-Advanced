@@ -7,6 +7,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.OutputKeys;
+import java.util.*;
 
 public class XMLFile {
     private static final XMLFile instance = new XMLFile();
@@ -14,6 +15,7 @@ public class XMLFile {
     private Transformer transformer;
     private DOMSource source;
     private StreamResult consoleResult;
+    private StreamResult result;
     public static XMLFile getInstance() {
         return instance;
     }
@@ -30,8 +32,7 @@ public class XMLFile {
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
 			source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File("out"));
-			transformer.transform(source, result);
+			result = new StreamResult(new File("out.kml"));
 
 			// Output to console for testing
 			consoleResult = new StreamResult(System.out);
@@ -60,7 +61,7 @@ public class XMLFile {
     }
 
     private Element createPlacemarkElement(String name,
-            String style, String[] coordinates) {
+            String style, ArrayList<String> coordinates) {
         Element placemarkElement = doc.createElement("Placemark");
         Element nameElement = doc.createElement("name");
         nameElement.appendChild(doc.createTextNode(name));
@@ -80,15 +81,17 @@ public class XMLFile {
         Element coordElement = doc.createElement("coordinates");
         lineStringElement.appendChild(coordElement);
 
-        for (String item : coordinates) {
-            coordElement.appendChild(doc.createTextNode(item));
-        }
-        coordElement.appendChild(doc.createTextNode(System.lineSeparator()));
+        for (String item: coordinates) {
+            String[] parts = item.split(" ");
+            coordElement.appendChild(doc.createTextNode(
+                parts[0] + "," + parts[1]  + ",0" + "\n"
+            ));
+        };
         return placemarkElement;
     }
 
 
-    public void write(String argv[]) {
+    public void write(ArrayList<String> routeNodes) {
         try {
             // <kml>
             Element rootElement = doc.createElement("kml");
@@ -108,11 +111,10 @@ public class XMLFile {
 
             docElement.appendChild(createStyleElement("green", "ff009900"));
             docElement.appendChild(createStyleElement("red", "ff0000ff"));
-            String[] test = {"This", "is", "a", "test"};
-            docElement.appendChild(createPlacemarkElement("Taxi 1", "green", test));
+            docElement.appendChild(createPlacemarkElement("Taxi 1", "green", routeNodes));
 
 
-			transformer.transform(source, consoleResult);
+			transformer.transform(source, result);
 			System.out.println("File saved!");
 		} catch (Exception pce) {
             System.out.println("Error while writing file...");
