@@ -2,7 +2,22 @@ import java.io.*;
 import java.util.*;
 
 public class Taxibeat {
+    public static String taxisFile;
+    public static String clientFile;
+    public static String nodesFile;
+
     public static void main(String[] args) {
+        if (args.length != 4) {
+            System.out.println("Usage: Taxibeat <MAX_FRONTIER> <NODES_FILE.csv> <TAXIS_FILE.csv> <CLIENTS_FILE.csv>");
+            System.out.println("Hint: Input must be located in data/ directory");
+            System.exit(2);
+        }
+
+        int maxFrontier = Integer.valueOf(args[0]);
+        nodesFile = new String(args[1]);
+        taxisFile = new String(args[2]);
+        clientFile = new String(args[3]);
+
         World myWorld = World.getInstance();
         ArrayList<Taxi> fleet = Taxi.parse();
         Client clientPosition = Client.parse();
@@ -10,7 +25,6 @@ public class Taxibeat {
         myWorld.parseNodes();
         HashMap<String, ArrayList<GraphEdge>> searchSpace = myWorld.generateSearchSpace(clientPosition);
 
-        int maxFrontier = Integer.valueOf(args[0]);
 
         Comparator<Route> routeComparator = new RouteComparator();
         SortedSet<Route> routes = new TreeSet<Route>(routeComparator);
@@ -26,7 +40,8 @@ public class Taxibeat {
                 routes.add(route);
             }
         }
-        XMLFile outFile = new XMLFile("output/out" + maxFrontier + ".kml");
+        XMLFile outFile = new XMLFile("output/out-" +
+                Taxibeat.nodesFile.replace(".csv","") + "-" + maxFrontier + ".kml");
         outFile.write(routes);
     }
 

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import static java.lang.System.out;
 
 public class World {
     private ArrayList<Node> nodes;
@@ -33,7 +34,7 @@ public class World {
         double x, y;
         int streetId;
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/nodes.csv"))));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/" + Taxibeat.nodesFile))));
 
             reader.readLine(); // skip the first line with the captions
             while ((line = reader.readLine()) != null) {
