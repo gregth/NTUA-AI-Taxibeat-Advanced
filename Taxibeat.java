@@ -45,7 +45,7 @@ public class Taxibeat {
         System.out.println("\nSelected Driver ID: " + routes.first().getDriver().getId()
                 + " with total cost: " + routes.first().getCost() + " Kilometers.");
         XMLFile outFile = new XMLFile("output/out-" +
-                Taxibeat.nodesFile.replace(".csv","") + "-" + maxFrontier + ".kml");
+                Taxibeat.nodesFile.replace(".csv","").replace("/","-") + "-" + maxFrontier + ".kml");
         outFile.write(routes);
 
     }
