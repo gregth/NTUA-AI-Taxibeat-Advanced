@@ -2,7 +2,22 @@ import java.io.*;
 import java.util.*;
 
 public class Taxibeat {
+    public static String taxisFile;
+    public static String clientFile;
+    public static String nodesFile;
+
     public static void main(String[] args) {
+        if (args.length != 4) {
+            System.out.println("Usage: Taxibeat <MAX_FRONTIER> <NODES_FILE.csv> <TAXIS_FILE.csv> <CLIENTS_FILE.csv>");
+            System.out.println("Hint: Input must be located in data/ directory");
+            System.exit(2);
+        }
+
+        int maxFrontier = Integer.valueOf(args[0]);
+        nodesFile = new String(args[1]);
+        taxisFile = new String(args[2]);
+        clientFile = new String(args[3]);
+
         World myWorld = World.getInstance();
         ArrayList<Taxi> fleet = Taxi.parse();
         Client clientPosition = Client.parse();
@@ -10,11 +25,11 @@ public class Taxibeat {
         myWorld.parseNodes();
         HashMap<String, Node> searchSpace = myWorld.generateSearchSpace(clientPosition);
 
-        int maxFrontier = Integer.valueOf(args[0]);
 
         Comparator<Route> routeComparator = new RouteComparator();
         SortedSet<Route> routes = new TreeSet<Route>(routeComparator);
         double minRouteDistance = -1;
+        System.out.println("\n\n****PRINTING STATISTICS****\n");
         System.out.println("DriverID, Steps, ActualMaxFrontier, MaxFrontier");
 
         for (Taxi taxi : fleet) {
@@ -26,8 +41,13 @@ public class Taxibeat {
                 routes.add(route);
             }
         }
-        XMLFile outFile = new XMLFile("output/out" + maxFrontier + ".kml");
+
+        System.out.println("\nSelected Driver ID: " + routes.first().getDriver().getId()
+                + " with total cost: " + routes.first().getCost() + " Kilometers.");
+        XMLFile outFile = new XMLFile("output/out-" +
+                Taxibeat.nodesFile.replace(".csv","").replace("/","-") + "-" + maxFrontier + ".kml");
         outFile.write(routes);
+
     }
 
     private static Route findRoute(HashMap<String, Node> searchSpace, Position startPosition, int maxFrontier) {
@@ -110,6 +130,10 @@ public class Taxibeat {
             System.out.print(maxFrontier + "\n");
             top.getRoute().add(top.getEdge().getNode().stringify());
             return new Route(top.getRoute(), top.getRouteCost());
+        } else {
+            System.out.print(stepsCounter + ",");
+            System.out.print("FAIL,");
+            System.out.print(maxFrontier + "\n");
         }
 
         return null;
