@@ -1,9 +1,9 @@
 public class GraphEdge {
-    private Node leadsToNode;
+    private SearchNode leadsToNode;
     private double weight;
     private double h;
 
-    public GraphEdge(Node node, double weight, double h) {
+    public GraphEdge(SearchNode node, double weight, double h) {
         this.leadsToNode = node;
         this.weight = weight;
         this.h = h;
@@ -13,7 +13,7 @@ public class GraphEdge {
         return this.h == 0;
     }
 
-    public Node getNode() {
+    public SearchNode getNode() {
         return leadsToNode;
     }
 
