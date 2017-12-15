@@ -109,6 +109,10 @@ public class Taxibeat {
             System.out.print(maxFrontier + "\n");
             top.getRoute().add(top.getEdge().getNode());
             return new Route(top.getRoute(), top.getRouteCost());
+        } else {
+            System.out.print(stepsCounter + ",");
+            System.out.print("FAIL,");
+            System.out.print(maxFrontier + "\n");
         }
 
         return null;
