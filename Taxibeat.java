@@ -29,6 +29,7 @@ public class Taxibeat {
         Comparator<Route> routeComparator = new RouteComparator();
         SortedSet<Route> routes = new TreeSet<Route>(routeComparator);
         double minRouteDistance = -1;
+        System.out.println("\n\n****PRINTING STATISTICS****\n");
         System.out.println("DriverID, Steps, ActualMaxFrontier, MaxFrontier");
 
         for (Taxi taxi : fleet) {
@@ -40,9 +41,13 @@ public class Taxibeat {
                 routes.add(route);
             }
         }
+
+        System.out.println("\nSelected Driver ID: " + routes.first().getDriver().getId()
+                + " with total cost: " + routes.first().getCost() + " Kilometers.");
         XMLFile outFile = new XMLFile("output/out-" +
                 Taxibeat.nodesFile.replace(".csv","") + "-" + maxFrontier + ".kml");
         outFile.write(routes);
+
     }
 
     private static Route findRoute(HashMap<String, ArrayList<GraphEdge>> searchSpace, Position startPosition, int maxFrontier) {
