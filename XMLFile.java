@@ -30,6 +30,7 @@ public class XMLFile {
 			source = new DOMSource(doc);
 			result = new StreamResult(new File(filename));
 
+            System.out.println("Open ouput file at: " + filename);
 			// Output to console for testing
 			consoleResult = new StreamResult(System.out);
         } catch (Exception e) {
