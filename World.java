@@ -63,8 +63,8 @@ public class World {
         }
     }
 
-    public HashMap<String, Node> generateSearchSpace(Client clientPosition) {
-        HashMap<String, Node> searchSpace = new HashMap<String, Node>();
+    public HashMap<String, SearchNode> generateSearchSpace(Client clientPosition) {
+        HashMap<String, SearchNode> searchSpace = new HashMap<String, SearchNode>();
 
         double nodesDistance;
         int previousStreetId = -1;
@@ -75,9 +75,10 @@ public class World {
         Node targetNode = closestNode(clientPosition);
 
         for (Node currentNode : nodes) {
+            boolean isGoal = targetNode.stringify().equals(currentNode.stringify());
             if (!searchSpace.containsKey(currentNode.stringify())) {
                 // Insert new node in search space
-                searchSpace.put(currentNode.stringify(), currentNode);
+                searchSpace.put(currentNode.stringify(), new SearchNode(currentNode, isGoal, currentNode.distanceTo(targetNode)));
             }
 
             // Check if we are parsing a new street

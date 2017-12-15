@@ -6,7 +6,13 @@ class Route {
     private Taxi driver;
     private boolean min;
 
-    public Route(ArrayList<String> nodes, double cost) {
+    public Route(SearchNode goal, double cost) {
+        nodes = new ArrayList<String>();
+        SearchNode current = goal;
+        while (current != null) {
+            nodes.add(0, current.stringify());
+            current = current.getPrevious();
+        }
         this.nodes = nodes;
         this.cost = cost;
     }

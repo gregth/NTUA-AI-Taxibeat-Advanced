@@ -23,7 +23,6 @@ public class Taxibeat {
         Client clientPosition = Client.parse();
 
         myWorld.parseNodes();
-        HashMap<String, Node> searchSpace = myWorld.generateSearchSpace(clientPosition);
 
 
         Comparator<Route> routeComparator = new RouteComparator();
@@ -33,6 +32,7 @@ public class Taxibeat {
         System.out.println("DriverID, Steps, ActualMaxFrontier, MaxFrontier");
 
         for (Taxi taxi : fleet) {
+            HashMap<String, SearchNode> searchSpace = myWorld.generateSearchSpace(clientPosition);
             Node driverNode = myWorld.closestNode(taxi);
             System.out.print(taxi.getId() + ",");
             Route route = findRoute(searchSpace, driverNode, maxFrontier);
@@ -50,22 +50,26 @@ public class Taxibeat {
 
     }
 
-    private static Route findRoute(HashMap<String, Node> searchSpace, Position startPosition, int maxFrontier) {
-        Comparator<FrontierNode> comparator = new FrontierNodeComparator();
-        PriorityQueue<FrontierNode> queue = new PriorityQueue<FrontierNode>(10, comparator);
+    private static Route findRoute(HashMap<String, SearchNode> searchSpace, Position startPosition, int maxFrontier) {
+        Comparator<SearchNode> comparator = new SearchNodeComparator();
+        PriorityQueue<SearchNode> queue = new PriorityQueue<SearchNode>(10, comparator);
         Set<String> visited = new TreeSet<String>();
 
-        for (GraphEdge neighbor : searchSpace.get(startPosition.stringify()).getNeighbors()) {
-            queue.add(new FrontierNode(neighbor, startPosition.stringify()));
+        SearchNode startNode = searchSpace.get(startPosition.stringify());
+        for (GraphEdge neighbor : (startNode.getNeighbors())) {
+            SearchNode theNode = neighbor.getNode();
+            theNode.setCost(neighbor.getWeight());
+            theNode.setPrevious(startNode);
+            queue.add(theNode);
         }
         visited.add(startPosition.stringify());
 
-        FrontierNode top = null;
-        FrontierNode frontier;
+        SearchNode top = null;
+        SearchNode frontier;
         ArrayList<String> route;
         int counter, stepsCounter = 0, actualMaxFrontier = 0;
         boolean foundRoute = false;
-        PriorityQueue<FrontierNode> cloneQueue;
+        PriorityQueue<SearchNode> cloneQueue;
         while (queue.size() > 0) {
             if (queue.size() > actualMaxFrontier) {
                 actualMaxFrontier = queue.size();
@@ -74,46 +78,37 @@ public class Taxibeat {
             ++stepsCounter;
             top = queue.poll();
 
-            visited.add(top.getEdge().getNode().stringify());
+            visited.add(top.stringify());
 
-            if (top.getEdge().isGoal()) {
+            if (top.isGoal()) {
                 foundRoute = true;
                 break;
             }
 
 
-            for (GraphEdge neighbor : searchSpace.get(top.getEdge().getNode().stringify()).getNeighbors()) {
-                if (!visited.contains(neighbor.getNode().stringify())) {
-                    frontier = new FrontierNode(neighbor);
-                    frontier.setCost(top.getRouteCost() + neighbor.getWeight());
-                    route = frontier.getRoute();
-                    route.addAll(top.getRoute());
-                    route.add(top.getEdge().getNode().stringify());
+            for (GraphEdge neighbor : searchSpace.get(top.stringify()).getNeighbors()) {
+                SearchNode theNode = neighbor.getNode();
+                if (!visited.contains(theNode.stringify())) {
+                    double theCost = top.getRouteCost() + neighbor.getWeight();
 
-                    if (queue.contains(frontier)) {
-                        // Check if the same neighbor is already inside the frontier
-                        Iterator<FrontierNode> iterator = queue.iterator();
-                        while (iterator.hasNext()) {
-                            // Find the neighbor in the frontier to compare the cost
-                            FrontierNode currentNode = iterator.next();
-                            if (currentNode.getEdge().getNode().stringify().equals(neighbor.getNode().stringify())) {
-                                if (currentNode.getRouteCost() > frontier.getRouteCost()) {
-                                    // if the cost of reaching the neigbor from the current node
-                                    // is less, replace the old one from the frontier
-                                    queue.remove(currentNode);
-                                    queue.add(frontier);
-                                }
-                                break;
-                            }
+                    if (queue.contains(theNode)) {
+                        if (theCost < theNode.getRouteCost()) {
+                            // TODO Tha knanaginei taksinomisi?
+                            theNode.setCost(theCost);
+                            theNode.setPrevious(top);
+                            queue.add(theNode);
+                            // TODO SET ROUTE
                         }
                     } else {
-                        queue.add(frontier);
+                        theNode.setPrevious(top);
+                        theNode.setCost(theCost);
+                        queue.add(theNode);
                     }
                 }
             }
 
             if (queue.size() > maxFrontier) {
-                cloneQueue = new PriorityQueue<FrontierNode>(10, comparator);
+                cloneQueue = new PriorityQueue<SearchNode>(10, comparator);
                 counter = maxFrontier;
                 while (counter > 0) {
                     cloneQueue.add(queue.poll());
@@ -128,8 +123,7 @@ public class Taxibeat {
             System.out.print(stepsCounter + ",");
             System.out.print(actualMaxFrontier + ",");
             System.out.print(maxFrontier + "\n");
-            top.getRoute().add(top.getEdge().getNode().stringify());
-            return new Route(top.getRoute(), top.getRouteCost());
+            return new Route(top, top.getRouteCost());
         } else {
             System.out.print(stepsCounter + ",");
             System.out.print("FAIL,");

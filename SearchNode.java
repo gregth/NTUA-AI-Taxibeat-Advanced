@@ -3,15 +3,22 @@ import java.util.*;
 public class SearchNode {
     Node positionNode;
     private ArrayList<GraphEdge> neighbors;
-    private ArrayList<String> route;
     private double routeCost;
     private boolean isGoal;
+    private double h;
+    SearchNode previous;
 
-    public SearchNode(Node A, boolean isGoal) {
+    public double getHeuristic() {
+        return h;
+    }
+
+    public SearchNode(Node A, boolean isGoal, double h) {
+        previous = null;
         this.neighbors = new ArrayList<GraphEdge>();
         routeCost = 0; //TODO
-        route = new ArrayList<String>();
         this.isGoal = isGoal;
+        this.h = h;
+        positionNode = A;
     }
 
     public boolean isGoal() {
@@ -34,23 +41,20 @@ public class SearchNode {
         return positionNode.stringify();
     }
 
+    public void setPrevious(SearchNode A) {
+        this.previous = A;
+    }
+
+    public SearchNode getPrevious() {
+        return this.previous;
+    }
+
     public void setCost(double routeCost) {
         this.routeCost = routeCost;
     }
 
     public double getRouteCost() {
         return routeCost;
-    }
-
-    public ArrayList<String> getRoute() {
-        return route;
-    }
-
-    public void printRoute() {
-        for (String routeNode : route) {
-            System.out.print(routeNode + ", ");
-        }
-        System.out.println("\nCost: " + this.routeCost);
     }
 
 	@Override
@@ -72,5 +76,9 @@ public class SearchNode {
 	public int hashCode() {
         return Objects.hash(this.stringify());
 	}
+
+    public void print() {
+        System.out.println(this.stringify());
+    }
 
 }
