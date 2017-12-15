@@ -53,7 +53,7 @@ class FrontierNode {
 
 		final FrontierNode other = (FrontierNode) obj;
 
-        return other.getEdge().getNode().equals(this.getEdge().getNode());
+        return other.getEdge().getNode().stringify().equals(this.getEdge().getNode().stringify());
 	}
 
 	@Override

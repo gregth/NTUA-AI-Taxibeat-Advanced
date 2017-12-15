@@ -8,7 +8,7 @@ public class Taxibeat {
         Client clientPosition = Client.parse();
 
         myWorld.parseNodes();
-        HashMap<String, ArrayList<GraphEdge>> searchSpace = myWorld.generateSearchSpace(clientPosition);
+        HashMap<String, Node> searchSpace = myWorld.generateSearchSpace(clientPosition);
 
         int maxFrontier = Integer.valueOf(args[0]);
 
@@ -30,12 +30,12 @@ public class Taxibeat {
         outFile.write(routes);
     }
 
-    private static Route findRoute(HashMap<String, ArrayList<GraphEdge>> searchSpace, Position startPosition, int maxFrontier) {
+    private static Route findRoute(HashMap<String, Node> searchSpace, Position startPosition, int maxFrontier) {
         Comparator<FrontierNode> comparator = new FrontierNodeComparator();
         PriorityQueue<FrontierNode> queue = new PriorityQueue<FrontierNode>(10, comparator);
         Set<String> visited = new TreeSet<String>();
 
-        for (GraphEdge neighbor : searchSpace.get(startPosition.stringify())) {
+        for (GraphEdge neighbor : searchSpace.get(startPosition.stringify()).getNeighbors()) {
             queue.add(new FrontierNode(neighbor, startPosition.stringify()));
         }
         visited.add(startPosition.stringify());
@@ -54,7 +54,7 @@ public class Taxibeat {
             ++stepsCounter;
             top = queue.poll();
 
-            visited.add(top.getEdge().getNode());
+            visited.add(top.getEdge().getNode().stringify());
 
             if (top.getEdge().isGoal()) {
                 foundRoute = true;
@@ -62,13 +62,13 @@ public class Taxibeat {
             }
 
 
-            for (GraphEdge neighbor : searchSpace.get(top.getEdge().getNode())) {
-                if (!visited.contains(neighbor.getNode())) {
+            for (GraphEdge neighbor : searchSpace.get(top.getEdge().getNode().stringify()).getNeighbors()) {
+                if (!visited.contains(neighbor.getNode().stringify())) {
                     frontier = new FrontierNode(neighbor);
                     frontier.setCost(top.getRouteCost() + neighbor.getWeight());
                     route = frontier.getRoute();
                     route.addAll(top.getRoute());
-                    route.add(top.getEdge().getNode());
+                    route.add(top.getEdge().getNode().stringify());
 
                     if (queue.contains(frontier)) {
                         // Check if the same neighbor is already inside the frontier
@@ -76,7 +76,7 @@ public class Taxibeat {
                         while (iterator.hasNext()) {
                             // Find the neighbor in the frontier to compare the cost
                             FrontierNode currentNode = iterator.next();
-                            if (currentNode.getEdge().getNode().equals(neighbor.getNode())) {
+                            if (currentNode.getEdge().getNode().stringify().equals(neighbor.getNode().stringify())) {
                                 if (currentNode.getRouteCost() > frontier.getRouteCost()) {
                                     // if the cost of reaching the neigbor from the current node
                                     // is less, replace the old one from the frontier
@@ -104,10 +104,11 @@ public class Taxibeat {
         }
 
         if (foundRoute) {
+            // Print statistics
             System.out.print(stepsCounter + ",");
             System.out.print(actualMaxFrontier + ",");
             System.out.print(maxFrontier + "\n");
-            top.getRoute().add(top.getEdge().getNode());
+            top.getRoute().add(top.getEdge().getNode().stringify());
             return new Route(top.getRoute(), top.getRouteCost());
         }
 

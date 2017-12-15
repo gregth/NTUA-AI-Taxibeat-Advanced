@@ -6,7 +6,7 @@ class FrontierNodeComparator implements Comparator<FrontierNode> {
         double aG = a.getRouteCost(), bG = b.getRouteCost();
         double aH = a.getEdge().getHeuristic(), bH = b.getEdge().getHeuristic();
 
-        if (a.getEdge().getNode().equals(b.getEdge().getNode())) {
+        if (a.getEdge().getNode().stringify().equals(b.getEdge().getNode().stringify())) {
             return 0;
         }
 
