@@ -95,7 +95,12 @@ public class Taxibeat {
                     double theCost = top.getRouteCost() + neighbor.getWeight();
                     if (inQueueHash.containsKey(theNode.stringify())) {
                         if (theCost < theNode.getRouteCost()) {
-                            // TODO Tha knanaginei taksinomisi?
+                            /* WARRING: Strange it seems, but if you don't remove the
+                             * node before updating its members, the next call of queue.remove()
+                             * can't find the element for removal. A major loop bug was introduced
+                             * by this, now solved
+                             */
+                            queue.remove(theNode);
                             theNode.setCost(theCost);
                             theNode.setPrevious(top);
                             queue.add(theNode);
