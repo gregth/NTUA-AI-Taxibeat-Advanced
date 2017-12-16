@@ -52,8 +52,9 @@ public class Taxibeat {
 
     private static Route findRoute(HashMap<String, SearchNode> searchSpace, Position startPosition, int maxFrontier) {
         Comparator<SearchNode> comparator = new SearchNodeComparator();
-        PriorityQueue<SearchNode> queue = new PriorityQueue<SearchNode>(10, comparator);
+        SortedSet<SearchNode> queue = new TreeSet<SearchNode>(comparator);
         Set<String> visited = new TreeSet<String>();
+        HashMap<String,String> inQueueHash = new HashMap<String, String>();
 
         SearchNode startNode = searchSpace.get(startPosition.stringify());
         for (GraphEdge neighbor : (startNode.getNeighbors())) {
@@ -61,6 +62,7 @@ public class Taxibeat {
             theNode.setCost(neighbor.getWeight());
             theNode.setPrevious(startNode);
             queue.add(theNode);
+            inQueueHash.put(theNode.stringify(), "true");
         }
         visited.add(startPosition.stringify());
 
@@ -69,53 +71,55 @@ public class Taxibeat {
         ArrayList<String> route;
         int counter, stepsCounter = 0, actualMaxFrontier = 0;
         boolean foundRoute = false;
-        PriorityQueue<SearchNode> cloneQueue;
         while (queue.size() > 0) {
             if (queue.size() > actualMaxFrontier) {
                 actualMaxFrontier = queue.size();
             }
 
             ++stepsCounter;
-            top = queue.poll();
+
+            System.out.print("ABOUT TO REMOVE THE FOLLOWING:");
+            top = queue.first();
+            top.print();
+            inQueueHash.remove(top.stringify());
 
             visited.add(top.stringify());
 
+            top.print();
             if (top.isGoal()) {
                 foundRoute = true;
                 break;
             }
 
 
-            for (GraphEdge neighbor : searchSpace.get(top.stringify()).getNeighbors()) {
+            for (GraphEdge neighbor : top.getNeighbors()) {
                 SearchNode theNode = neighbor.getNode();
+                theNode.print();
                 if (!visited.contains(theNode.stringify())) {
                     double theCost = top.getRouteCost() + neighbor.getWeight();
 
-                    if (queue.contains(theNode)) {
+                    if (inQueueHash.containsKey(theNode.stringify())) {
+                        System.out.println("Already");
                         if (theCost < theNode.getRouteCost()) {
                             // TODO Tha knanaginei taksinomisi?
                             theNode.setCost(theCost);
                             theNode.setPrevious(top);
                             queue.add(theNode);
-                            // TODO SET ROUTE
                         }
                     } else {
                         theNode.setPrevious(top);
                         theNode.setCost(theCost);
                         queue.add(theNode);
+                        inQueueHash.put(theNode.stringify(), "a");
                     }
                 }
             }
 
             if (queue.size() > maxFrontier) {
-                cloneQueue = new PriorityQueue<SearchNode>(10, comparator);
-                counter = maxFrontier;
-                while (counter > 0) {
-                    cloneQueue.add(queue.poll());
-                    --counter;
-                }
-                queue = cloneQueue;
+                inQueueHash.remove(queue.last().stringify());
+                queue.remove(queue.last());
             }
+            queue.remove(top);
         }
 
         if (foundRoute) {
