@@ -57,8 +57,6 @@ public class Taxibeat {
         HashMap<String,String> inQueueHash = new HashMap<String, String>();
 
         SearchNode startNode = searchSpace.get(startPosition.stringify());
-        System.out.print("Starting from node: ");
-        startNode.println();
         for (GraphEdge neighbor : (startNode.getNeighbors())) {
             SearchNode theNode = neighbor.getNode();
             theNode.setCost(neighbor.getWeight());
