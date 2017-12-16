@@ -57,6 +57,8 @@ public class Taxibeat {
         HashMap<String,String> inQueueHash = new HashMap<String, String>();
 
         SearchNode startNode = searchSpace.get(startPosition.stringify());
+        System.out.print("Starting from node: ");
+        startNode.println();
         for (GraphEdge neighbor : (startNode.getNeighbors())) {
             SearchNode theNode = neighbor.getNode();
             theNode.setCost(neighbor.getWeight());
@@ -77,29 +79,21 @@ public class Taxibeat {
             }
 
             ++stepsCounter;
-
-            System.out.print("ABOUT TO REMOVE THE FOLLOWING:");
             top = queue.first();
-            top.print();
+            queue.remove(top);
             inQueueHash.remove(top.stringify());
-
             visited.add(top.stringify());
 
-            top.print();
             if (top.isGoal()) {
                 foundRoute = true;
                 break;
             }
 
-
             for (GraphEdge neighbor : top.getNeighbors()) {
                 SearchNode theNode = neighbor.getNode();
-                theNode.print();
                 if (!visited.contains(theNode.stringify())) {
                     double theCost = top.getRouteCost() + neighbor.getWeight();
-
                     if (inQueueHash.containsKey(theNode.stringify())) {
-                        System.out.println("Already");
                         if (theCost < theNode.getRouteCost()) {
                             // TODO Tha knanaginei taksinomisi?
                             theNode.setCost(theCost);
@@ -119,7 +113,6 @@ public class Taxibeat {
                 inQueueHash.remove(queue.last().stringify());
                 queue.remove(queue.last());
             }
-            queue.remove(top);
         }
 
         if (foundRoute) {

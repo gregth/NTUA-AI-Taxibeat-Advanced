@@ -6,11 +6,14 @@ class SearchNodeComparator implements Comparator<SearchNode> {
         double aG = a.getRouteCost(), bG = b.getRouteCost();
         double aH = a.getHeuristic(), bH = b.getHeuristic();
 
-        System.out.println("CALLED IN COMPARATOR");
-            a.print();
-            b.print();
+        /* Debug
+        System.out.print("COMPARATOR Caled for: ");
+        a.print();
+        b.print();
+        System.out.println();
+        */
+
         if (a.stringify().equals(b.stringify())) {
-            System.out.println("YAY");
             return 0;
         }
 

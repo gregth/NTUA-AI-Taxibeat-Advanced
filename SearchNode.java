@@ -82,7 +82,10 @@ public class SearchNode {
 	}*/
 
     public void print() {
-        System.out.println(this.stringify());
+        System.out.print(this.stringify() + " ");
     }
 
+    public void println() {
+        System.out.println(this.stringify());
+    }
 }
