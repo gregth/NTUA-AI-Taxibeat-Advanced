@@ -57,30 +57,6 @@ public class SearchNode {
         return routeCost;
     }
 
-    /*
-	@Override
-	public boolean equals(Object obj) {
-        System.out.println("CALLED IN EQUALS");
-		if (obj == null) {
-			return false;
-		}
-
-        if (obj == this) {
-            return true;
-        }
-
-		final SearchNode other = (SearchNode) obj;
-
-        return other.stringify().equals(this.stringify());
-	}
-
-	@Override
-	public int hashCode() {
-        System.out.println("CALLED IN HASH");
-
-        return Objects.hash(this.stringify());
-	}*/
-
     public void print() {
         System.out.print(this.stringify() + " ");
     }
