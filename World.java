@@ -15,18 +15,6 @@ public class World {
     }
 
 
-    private void printSearchSpace(HashMap<String, ArrayList<GraphEdge>> searchSpace) {
-        ArrayList<GraphEdge> neighbors;
-        for(String currentNode : searchSpace.keySet()) {
-            System.out.println("Neighbors of " + currentNode);
-
-            neighbors = searchSpace.get(currentNode);
-            for (GraphEdge neighbor : neighbors) {
-                neighbor.print();
-            }
-        }
-    }
-
     public void parseNodes() {
         BufferedReader reader = null;
 
