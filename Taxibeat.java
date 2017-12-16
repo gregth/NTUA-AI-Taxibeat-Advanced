@@ -24,15 +24,15 @@ public class Taxibeat {
 
         myWorld.parseNodes();
 
-
         Comparator<Route> routeComparator = new RouteComparator();
         SortedSet<Route> routes = new TreeSet<Route>(routeComparator);
         double minRouteDistance = -1;
         System.out.println("\n\n****PRINTING STATISTICS****\n");
         System.out.println("DriverID, Steps, ActualMaxFrontier, MaxFrontier");
 
+        SearchSpace searchSpace = myWorld.generateSearchSpace(clientPosition);
         for (Taxi taxi : fleet) {
-            HashMap<String, SearchNode> searchSpace = myWorld.generateSearchSpace(clientPosition);
+            searchSpace.clean();
             Node driverNode = myWorld.closestNode(taxi);
             System.out.print(taxi.getId() + ",");
             Route route = findRoute(searchSpace, driverNode, maxFrontier);
@@ -50,17 +50,19 @@ public class Taxibeat {
 
     }
 
-    private static Route findRoute(HashMap<String, SearchNode> searchSpace, Position startPosition, int maxFrontier) {
+    private static Route findRoute(SearchSpace searchSpace, Position startPosition, int maxFrontier) {
+        HashMap<String, SearchNode> searchSpaceMap = searchSpace.getMap();
         Comparator<SearchNode> comparator = new SearchNodeComparator();
         SortedSet<SearchNode> queue = new TreeSet<SearchNode>(comparator);
         Set<String> visited = new TreeSet<String>();
         HashMap<String,String> inQueueHash = new HashMap<String, String>();
 
-        SearchNode startNode = searchSpace.get(startPosition.stringify());
+        SearchNode startNode = searchSpaceMap.get(startPosition.stringify());
         for (GraphEdge neighbor : (startNode.getNeighbors())) {
             SearchNode theNode = neighbor.getNode();
             theNode.setCost(neighbor.getWeight());
             theNode.setPrevious(startNode);
+            searchSpace.setDirtyEntry(theNode);
             queue.add(theNode);
             inQueueHash.put(theNode.stringify(), "true");
         }
@@ -101,11 +103,13 @@ public class Taxibeat {
                             queue.remove(theNode);
                             theNode.setCost(theCost);
                             theNode.setPrevious(top);
+                            searchSpace.setDirtyEntry(theNode);
                             queue.add(theNode);
                         }
                     } else {
                         theNode.setPrevious(top);
                         theNode.setCost(theCost);
+                        searchSpace.setDirtyEntry(theNode);
                         queue.add(theNode);
                         inQueueHash.put(theNode.stringify(), "a");
                     }

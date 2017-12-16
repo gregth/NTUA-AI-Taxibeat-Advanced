@@ -14,6 +14,7 @@ public class World {
         return instance;
     }
 
+
     private void printSearchSpace(HashMap<String, ArrayList<GraphEdge>> searchSpace) {
         ArrayList<GraphEdge> neighbors;
         for(String currentNode : searchSpace.keySet()) {
@@ -63,7 +64,7 @@ public class World {
         }
     }
 
-    public HashMap<String, SearchNode> generateSearchSpace(Client clientPosition) {
+    public SearchSpace generateSearchSpace(Client clientPosition) {
         HashMap<String, SearchNode> searchSpace = new HashMap<String, SearchNode>();
 
         double nodesDistance;
@@ -114,7 +115,7 @@ public class World {
         }
 
         //printSearchSpace(searchSpace);
-        return searchSpace;
+        return new SearchSpace(searchSpace);
     }
 
     public Node closestNode(Position position) {
@@ -130,4 +131,5 @@ public class World {
 
         return closest;
     }
+
 }
