@@ -23,8 +23,6 @@ public class Taxibeat {
         Client clientPosition = Client.parse();
 
         myWorld.parseNodes();
-        HashMap<String, ArrayList<GraphEdge>> searchSpace = myWorld.generateSearchSpace(clientPosition);
-
 
         Comparator<Route> routeComparator = new RouteComparator();
         SortedSet<Route> routes = new TreeSet<Route>(routeComparator);
@@ -32,7 +30,9 @@ public class Taxibeat {
         System.out.println("\n\n****PRINTING STATISTICS****\n");
         System.out.println("DriverID, Steps, ActualMaxFrontier, MaxFrontier");
 
+        SearchSpace searchSpace = myWorld.generateSearchSpace(clientPosition);
         for (Taxi taxi : fleet) {
+            searchSpace.clean();
             Node driverNode = myWorld.closestNode(taxi);
             System.out.print(taxi.getId() + ",");
             Route route = findRoute(searchSpace, driverNode, maxFrontier);
@@ -50,85 +50,84 @@ public class Taxibeat {
 
     }
 
-    private static Route findRoute(HashMap<String, ArrayList<GraphEdge>> searchSpace, Position startPosition, int maxFrontier) {
-        Comparator<FrontierNode> comparator = new FrontierNodeComparator();
-        PriorityQueue<FrontierNode> queue = new PriorityQueue<FrontierNode>(10, comparator);
+    private static Route findRoute(SearchSpace searchSpace, Position startPosition, int maxFrontier) {
+        HashMap<String, SearchNode> searchSpaceMap = searchSpace.getMap();
+        Comparator<SearchNode> comparator = new SearchNodeComparator();
+        SortedSet<SearchNode> queue = new TreeSet<SearchNode>(comparator);
         Set<String> visited = new TreeSet<String>();
+        HashMap<String,String> inQueueHash = new HashMap<String, String>();
 
-        for (GraphEdge neighbor : searchSpace.get(startPosition.stringify())) {
-            queue.add(new FrontierNode(neighbor, startPosition.stringify()));
+        SearchNode startNode = searchSpaceMap.get(startPosition.stringify());
+        for (GraphEdge neighbor : (startNode.getNeighbors())) {
+            SearchNode theNode = neighbor.getNode();
+            theNode.setCost(neighbor.getWeight());
+            theNode.setPrevious(startNode);
+            searchSpace.setDirtyEntry(theNode);
+            queue.add(theNode);
+            inQueueHash.put(theNode.stringify(), "true");
         }
         visited.add(startPosition.stringify());
 
-        FrontierNode top = null;
-        FrontierNode frontier;
+        SearchNode top = null;
+        SearchNode frontier;
         ArrayList<String> route;
         int counter, stepsCounter = 0, actualMaxFrontier = 0;
         boolean foundRoute = false;
-        PriorityQueue<FrontierNode> cloneQueue;
         while (queue.size() > 0) {
             if (queue.size() > actualMaxFrontier) {
                 actualMaxFrontier = queue.size();
             }
 
             ++stepsCounter;
-            top = queue.poll();
+            top = queue.first();
+            queue.remove(top);
+            inQueueHash.remove(top.stringify());
+            visited.add(top.stringify());
 
-            visited.add(top.getEdge().getNode());
-
-            if (top.getEdge().isGoal()) {
+            if (top.isGoal()) {
                 foundRoute = true;
                 break;
             }
 
-
-            for (GraphEdge neighbor : searchSpace.get(top.getEdge().getNode())) {
-                if (!visited.contains(neighbor.getNode())) {
-                    frontier = new FrontierNode(neighbor);
-                    frontier.setCost(top.getRouteCost() + neighbor.getWeight());
-                    route = frontier.getRoute();
-                    route.addAll(top.getRoute());
-                    route.add(top.getEdge().getNode());
-
-                    if (queue.contains(frontier)) {
-                        // Check if the same neighbor is already inside the frontier
-                        Iterator<FrontierNode> iterator = queue.iterator();
-                        while (iterator.hasNext()) {
-                            // Find the neighbor in the frontier to compare the cost
-                            FrontierNode currentNode = iterator.next();
-                            if (currentNode.getEdge().getNode().equals(neighbor.getNode())) {
-                                if (currentNode.getRouteCost() > frontier.getRouteCost()) {
-                                    // if the cost of reaching the neigbor from the current node
-                                    // is less, replace the old one from the frontier
-                                    queue.remove(currentNode);
-                                    queue.add(frontier);
-                                }
-                                break;
-                            }
+            for (GraphEdge neighbor : top.getNeighbors()) {
+                SearchNode theNode = neighbor.getNode();
+                if (!visited.contains(theNode.stringify())) {
+                    double theCost = top.getRouteCost() + neighbor.getWeight();
+                    if (inQueueHash.containsKey(theNode.stringify())) {
+                        if (theCost < theNode.getRouteCost()) {
+                            /* WARRING: Strange it seems, but if you don't remove the
+                             * node before updating its members, the next call of queue.remove()
+                             * can't find the element for removal. A major loop bug was introduced
+                             * by this, now solved
+                             */
+                            queue.remove(theNode);
+                            theNode.setCost(theCost);
+                            theNode.setPrevious(top);
+                            searchSpace.setDirtyEntry(theNode);
+                            queue.add(theNode);
                         }
                     } else {
-                        queue.add(frontier);
+                        theNode.setPrevious(top);
+                        theNode.setCost(theCost);
+                        searchSpace.setDirtyEntry(theNode);
+                        queue.add(theNode);
+                        inQueueHash.put(theNode.stringify(), "a");
                     }
                 }
             }
 
             if (queue.size() > maxFrontier) {
-                cloneQueue = new PriorityQueue<FrontierNode>(10, comparator);
-                counter = maxFrontier;
-                while (counter > 0) {
-                    cloneQueue.add(queue.poll());
-                    --counter;
-                }
-                queue = cloneQueue;
+                inQueueHash.remove(queue.last().stringify());
+                queue.remove(queue.last());
             }
         }
 
         if (foundRoute) {
+            // Print statistics
             System.out.print(stepsCounter + ",");
             System.out.print(actualMaxFrontier + ",");
             System.out.print(maxFrontier + "\n");
-            top.getRoute().add(top.getEdge().getNode());
-            return new Route(top.getRoute(), top.getRouteCost());
+            return new Route(top, top.getRouteCost());
         } else {
             System.out.print(stepsCounter + ",");
             System.out.print("FAIL,");

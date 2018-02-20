@@ -1,10 +1,10 @@
 public class GraphEdge {
-    private String node;
+    private SearchNode leadsToNode;
     private double weight;
     private double h;
 
-    public GraphEdge(String node, double weight, double h) {
-        this.node = node;
+    public GraphEdge(SearchNode node, double weight, double h) {
+        this.leadsToNode = node;
         this.weight = weight;
         this.h = h;
     }
@@ -13,8 +13,8 @@ public class GraphEdge {
         return this.h == 0;
     }
 
-    public String getNode() {
-        return node;
+    public SearchNode getNode() {
+        return leadsToNode;
     }
 
     public double getWeight() {
@@ -30,6 +30,6 @@ public class GraphEdge {
     }
 
     public void print() {
-        System.out.println("('" + node + ", " + this.weight + ", " + this.h + ")");
+        System.out.println("('" + leadsToNode.stringify() + ", " + this.weight + ", " + this.h + ")");
     }
 }
