@@ -46,6 +46,9 @@ public class Taxi extends Position {
                 longDistance = numbers[7].trim().equals("yes") ? true : false;
                 type = numbers[8].trim();
 
+                //TODO: PARSE LANGUAGES
+                String predicate = "taxi(" + x + "," + y + "," + id + "," + available + "," + capacity + "," + languages + "," + rating + "," + longDistance + "," + type + ")";
+
                 fleet.add(new Taxi(id, x, y));
             }
         } catch (IOException e) {

@@ -46,8 +46,6 @@ public class Line {
                 toll = parts[17].equals("yes") ? true : false;
 
                 String predicate = "lineSpecs(" + id + "," + highway + "," + name + "," + oneway + "," + lit + "," + lanes + "," + maxspeed + "," + railway + "," + boundary + "," + access + "," + natural + "," + barrier + "," + tunnel + "," + bridge + "," + incline + "," + waterway + "," + busway + "," + toll + ")";
-
-                System.out.println(predicate);
             }
         } catch (IOException e) {
             System.err.println("Exception:" + e.toString());
