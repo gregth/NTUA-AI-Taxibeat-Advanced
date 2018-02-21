@@ -21,7 +21,7 @@ public class World {
         String line = null, streetName;
         String[] parts = null;
         double x, y;
-        int streetId;
+        int lineId;
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/" + Taxibeat.nodesFile))));
 
@@ -31,13 +31,13 @@ public class World {
 
                 x = Double.valueOf(parts[0].trim());
                 y = Double.valueOf(parts[1].trim());
-                streetId = Integer.valueOf(parts[2].trim());
+                lineId = Integer.valueOf(parts[2].trim());
                 streetName = "";
-                if (parts.length == 4) {
-                    streetName = String.valueOf(parts[3].trim());
+                if (parts.length == 5) {
+                    streetName = String.valueOf(parts[4].trim());
                 }
 
-                nodes.add(new Node(x, y, streetName, streetId));
+                nodes.add(new Node(x, y, streetName, lineId));
             }
         } catch (IOException e) {
             System.err.println("Exception:" + e.toString());

@@ -26,9 +26,10 @@ public class Taxi extends Position {
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/" + Taxibeat.taxisFile))));
 
-            double x, y;
+            double x, y, rating;
             int id;
-            String line = null;
+            boolean available, longDistance;
+            String line = null, languages, capacity, type;
             String[] numbers = null;
             reader.readLine(); // skip the first line with the captions
             Taxi taxi = null;
@@ -38,6 +39,12 @@ public class Taxi extends Position {
                 x = Double.valueOf(numbers[0].trim());
                 y = Double.valueOf(numbers[1].trim());
                 id = Integer.valueOf(numbers[2].trim());
+                available = numbers[3].trim().equals("yes") ? true : false;
+                capacity = numbers[4].trim();
+                languages = numbers[5].trim();
+                rating = Double.valueOf(numbers[6].trim());
+                longDistance = numbers[7].trim().equals("yes") ? true : false;
+                type = numbers[8].trim();
 
                 fleet.add(new Taxi(id, x, y));
             }
