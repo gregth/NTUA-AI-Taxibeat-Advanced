@@ -18,6 +18,10 @@ public class Taxibeat {
         taxisFile = new String(args[2]);
         clientFile = new String(args[3]);
 
+        PrologParser prologSystem = PrologParser.getInstance();
+        prologSystem.test();
+        // Use parser to add facts in Prolog database
+
         World myWorld = World.getInstance();
         ArrayList<Taxi> fleet = Taxi.parse();
         Client clientPosition = Client.parse();
