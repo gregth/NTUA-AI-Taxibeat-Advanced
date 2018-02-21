@@ -6,18 +6,25 @@ public class SearchNode {
     private double routeCost;
     private boolean isGoal;
     private double h;
+    private double haversine;
     SearchNode previous;
 
     public double getHeuristic() {
         return h;
     }
 
-    public SearchNode(Node A, boolean isGoal, double h) {
+    public double getHaversine() {
+        return haversine;
+    }
+
+    public SearchNode(Node A, boolean isGoal, double haversine) {
         previous = null;
         this.neighbors = new ArrayList<GraphEdge>();
         routeCost = 0; //TODO
         this.isGoal = isGoal;
-        this.h = h;
+        this.haversine = haversine;
+        // TODO
+        this.h = haversine;
         positionNode = A;
     }
 

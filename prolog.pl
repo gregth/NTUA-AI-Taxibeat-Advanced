@@ -45,3 +45,30 @@ canMoveFromTo(Ax, Ay, Bx, By) :-
     node(Ax, Ay, LineID, _, FLa),
     node(Bx, By, LineID, _, FLb),
     allowedDirection(LineID, FLa, FLb).
+
+/* Rank lines */ 
+highwayType(LineID, Type) :-
+    lineSpecs(LineID, Type, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _). 
+
+highwayRank(LineID, 0.5) :- 
+    highwayType(LineID, primary).
+
+highwayRank(LineID, 1) :- 
+    highwayType(LineID, tertiary).
+    
+highwayRank(LineID, 0.7) :- 
+    highwayType(LineID, primary).
+
+
+/* Determine the coefficient of the road A==B. The less the coefficient the better the line. */
+coefficient(Ax, Ay, Bx, By, Value) :-
+    node(Ax, Ay, LineID, _, _),
+    node(Bx, By, LineID, _, _),
+    highwayRank(LineID, HRank ),
+    TRank is 1,
+    Value is HRank * TRank.
+
+/* A is the current Node, B is the examined child Node */
+heuristsic(Ax, Ay, Bx, By, DistanceFromBToTarget, Value) :-
+    coefficient(Ax, Ay, Bx, By, CoefficientValue),
+    Value is CoefficientValue * DistanceFromBToTarget.
