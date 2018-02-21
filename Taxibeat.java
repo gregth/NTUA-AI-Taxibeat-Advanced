@@ -5,10 +5,11 @@ public class Taxibeat {
     public static String taxisFile;
     public static String clientFile;
     public static String nodesFile;
+    public static String linesFile;
 
     public static void main(String[] args) {
-        if (args.length != 4) {
-            System.out.println("Usage: Taxibeat <MAX_FRONTIER> <NODES_FILE.csv> <TAXIS_FILE.csv> <CLIENTS_FILE.csv>");
+        if (args.length != 5) {
+            System.out.println("Usage: Taxibeat <MAX_FRONTIER> <NODES_FILE.csv> <TAXIS_FILE.csv> <CLIENTS_FILE.csv> <LINES_FILE.csv>");
             System.out.println("Hint: Input must be located in data/ directory");
             System.exit(2);
         }
@@ -17,6 +18,7 @@ public class Taxibeat {
         nodesFile = new String(args[1]);
         taxisFile = new String(args[2]);
         clientFile = new String(args[3]);
+        linesFile = new String(args[4]);
 
         PrologParser prologSystem = PrologParser.getInstance();
         prologSystem.test();
@@ -27,6 +29,8 @@ public class Taxibeat {
         Client clientPosition = Client.parse();
 
         myWorld.parseNodes();
+
+        Line.parse();
 
         Comparator<Route> routeComparator = new RouteComparator();
         SortedSet<Route> routes = new TreeSet<Route>(routeComparator);

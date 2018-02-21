@@ -21,9 +21,10 @@ public class Client extends Position {
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/" + Taxibeat.clientFile))));
 
-            double x, y;
-            int id;
+            double x, y, xDest, yDest;
+            int id, persons, luggage;
             String[] numbers = null;
+            String time, language;
 
             reader.readLine(); // skip the first line with the captions
             String line = reader.readLine();
@@ -31,6 +32,14 @@ public class Client extends Position {
 
             x = Double.valueOf(numbers[0].trim());
             y = Double.valueOf(numbers[1].trim());
+            xDest = Double.valueOf(numbers[2].trim());
+            yDest = Double.valueOf(numbers[3].trim());
+            time = numbers[4];
+            persons = Integer.valueOf(numbers[5].trim());
+            language = numbers[6];
+            luggage = Integer.valueOf(numbers[7].trim());
+
+            PrologParser prologSystem = PrologParser.getInstance();
 
             position = new Client(x, y);
         } catch (IOException e) {
