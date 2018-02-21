@@ -41,6 +41,8 @@ public class Client extends Position {
 
             PrologParser prologSystem = PrologParser.getInstance();
 
+            String predicate = "client(" + x + "," + y + "," + xDest + "," + yDest + "," + time + "," + persons + "," + language + "," + luggage + ")";
+
             position = new Client(x, y);
         } catch (IOException e) {
             System.err.println("Exception:" + e.toString());
