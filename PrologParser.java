@@ -29,6 +29,10 @@ public class PrologParser {
         return instance;
     }
 
+    // Asserts a predicate in prolog database
+    void asserta(String predicate) {
+        jip.asserta(parser.parseTerm(predicate));
+    }
 
     public void test() {
         try {
@@ -36,8 +40,6 @@ public class PrologParser {
             String x, y;
             x = "ton";
             y = "mary";
-
-            jip.asserta(parser.parseTerm("likes(ton, mary)"));
 
             System.out.println("CASE 1");
             jipQuery = jip.openSynchronousQuery(parser.parseTerm("likes(" + x + "," + y + ")."));
