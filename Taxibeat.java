@@ -50,6 +50,10 @@ public class Taxibeat {
             }
         }
 
+        for (Route route : routes) {
+            System.out.println(route.getDriver().getId() + " - " + route.getCost() + "km");
+        }
+
         System.out.println("\nSelected Driver ID: " + routes.first().getDriver().getId()
                 + " with total cost: " + routes.first().getCost() + " Kilometers.");
         XMLFile outFile = new XMLFile("output/out-" +
