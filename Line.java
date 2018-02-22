@@ -8,6 +8,7 @@ public class Line {
 
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/" + Taxibeat.linesFile))));
+            PrologParser prologSystem = PrologParser.getInstance();
 
             int id, lanes, maxspeed;
             String line, highway, name, oneway, boundary, access, natural, barrier, incline, waterway, busway;
@@ -40,12 +41,14 @@ public class Line {
                 barrier = parts[11];
                 tunnel = parts[12].equals("yes") ? true : false;
                 bridge = parts[13].equals("yes") ? true : false;
-                incline = parts[14];
+                incline = parts[14].replace('%', ' ');
                 waterway = parts[15];
                 busway = parts[16];
                 toll = parts[17].equals("yes") ? true : false;
 
-                String predicate = "lineSpecs(" + id + "," + highway + "," + name + "," + oneway + "," + lit + "," + lanes + "," + maxspeed + "," + railway + "," + boundary + "," + access + "," + natural + "," + barrier + "," + tunnel + "," + bridge + "," + incline + "," + waterway + "," + busway + "," + toll + ")";
+                String predicate = "lineSpecs(" + id + "," + highway + "," + "thename" + "," + oneway + "," + lit + "," + lanes + "," + maxspeed + "," + railway + "," + boundary + "," + access + "," + natural + "," + barrier + "," + tunnel + "," + bridge + "," + incline + "," + waterway + "," + busway + "," + toll + ")";
+                prologSystem.asserta(predicate);
+
             }
         } catch (IOException e) {
             System.err.println("Exception:" + e.toString());

@@ -4,11 +4,13 @@ import static java.lang.System.out;
 
 public class World {
     private ArrayList<Node> nodes;
+    PrologParser prologSystem;
 
     // Make Singleton Instance of the World Class
     private static final World instance = new World();
     private World() {
         nodes = new ArrayList<Node>();
+        prologSystem = PrologParser.getInstance();
     };
     public static World getInstance() {
         return instance;
@@ -25,6 +27,7 @@ public class World {
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("data/" + Taxibeat.nodesFile))));
 
+            int counter = 0;
             reader.readLine(); // skip the first line with the captions
             while ((line = reader.readLine()) != null) {
                 parts = line.split(",");
@@ -38,6 +41,8 @@ public class World {
                 }
 
                 nodes.add(new Node(x, y, streetName, lineId));
+                prologSystem.asserta("node(" + x + "," + y + "," + lineId + "," + "thename" + "," + counter + ")");
+                counter++;
             }
         } catch (IOException e) {
             System.err.println("Exception:" + e.toString());

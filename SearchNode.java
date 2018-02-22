@@ -71,4 +71,8 @@ public class SearchNode {
     public void println() {
         System.out.println(this.stringify());
     }
+
+    public Node getNode() {
+        return positionNode;
+    }
 }

@@ -31,6 +31,7 @@ public class PrologParser {
 
     // Asserts a predicate in prolog database
     void asserta(String predicate) {
+        System.out.println("Asserted: " + predicate);
         jip.asserta(parser.parseTerm(predicate));
     }
 
@@ -54,4 +55,23 @@ public class PrologParser {
         }
 
 	}
+
+    public boolean canMoveFromTo(Node A, Node B) {
+        double Ax = A.getX();
+        double Ay = A.getY();
+        double Bx = B.getX();
+        double By = B.getY();
+
+        String queryString = "canMoveFromTo(" + Ax + "," + Ay + "," + Bx + ","  + By + ").";
+        jipQuery = jip.openSynchronousQuery(parser.parseTerm(queryString));
+        if (jipQuery.nextSolution() != null) {
+            System.out.println("Prolog query invoked. Can move from to");
+            System.out.println(queryString);
+            return true;
+        } else {
+            System.out.println("Prolog query invoked. Can not move from to");
+            System.out.println(queryString);
+            return false;
+        }
+    }
 }
