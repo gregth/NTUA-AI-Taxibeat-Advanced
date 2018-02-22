@@ -25,7 +25,7 @@ public class Taxibeat {
         // Use parser to add facts in //Prolog database
 
         World myWorld = World.getInstance();
-        ArrayList<Taxi> fleet = Taxi.parse();
+        ArrayList<Taxi> fleet = Taxi.parse(prologSystem);
         Client clientPosition = Client.parse();
 
         myWorld.parseNodes();
