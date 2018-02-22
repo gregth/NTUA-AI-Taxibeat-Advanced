@@ -8,6 +8,7 @@ public class SearchNode {
     private double h;
     private double haversine;
     private double factor;
+    private double distance;
     SearchNode previous;
 
     public double getHeuristic() {
@@ -27,6 +28,7 @@ public class SearchNode {
         this.h = haversine;
         positionNode = A;
         factor = 1;
+        distance = 0;
     }
 
     public boolean isGoal() {
@@ -80,4 +82,14 @@ public class SearchNode {
     public void setFactor(double f) {
         factor = f;
     }
+
+    // Total distance for reaching this node
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
 }

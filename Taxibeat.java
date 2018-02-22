@@ -77,6 +77,7 @@ public class Taxibeat {
 
             theNode.setFactor(weightFactor);
             theNode.setCost(weightFactor * neighbor.getWeight());
+            theNode.setDistance(neighbor.getWeight());
             theNode.setPrevious(startNode);
             searchSpace.setDirtyEntry(theNode);
             queue.add(theNode);
@@ -115,6 +116,7 @@ public class Taxibeat {
                 if (!visited.contains(theNode.stringify())) {
                     double weightFactor = prologSystem.calculateFactor(top, theNode);
                     double theCost = top.getRouteCost() + weightFactor * neighbor.getWeight();
+                    double theDistance = top.getDistance() + neighbor.getWeight();
 
                     if (inQueueHash.containsKey(theNode.stringify())) {
                         if (theCost < theNode.getRouteCost()) {
@@ -126,6 +128,7 @@ public class Taxibeat {
                             queue.remove(theNode);
                             theNode.setFactor(weightFactor);
                             theNode.setCost(theCost);
+                            theNode.setDistance(theDistance);
                             theNode.setPrevious(top);
                             searchSpace.setDirtyEntry(theNode);
                             queue.add(theNode);
@@ -134,6 +137,7 @@ public class Taxibeat {
                         theNode.setPrevious(top);
                         theNode.setFactor(weightFactor);
                         theNode.setCost(theCost);
+                        theNode.setDistance(theDistance);
                         searchSpace.setDirtyEntry(theNode);
                         queue.add(theNode);
                         inQueueHash.put(theNode.stringify(), "a");
@@ -152,7 +156,7 @@ public class Taxibeat {
             System.out.print(stepsCounter + ",");
             System.out.print(actualMaxFrontier + ",");
             System.out.print(maxFrontier + "\n");
-            return new Route(top, top.getRouteCost());
+            return new Route(top, top.getDistance());
         } else {
             System.out.print(stepsCounter + ",");
             System.out.print("FAIL,");
