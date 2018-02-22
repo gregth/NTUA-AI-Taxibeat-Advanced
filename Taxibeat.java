@@ -26,7 +26,7 @@ public class Taxibeat {
 
         World myWorld = World.getInstance();
         ArrayList<Taxi> fleet = Taxi.parse(prologSystem);
-        Client clientPosition = Client.parse();
+        Client clientPosition = Client.parse(prologSystem);
 
         myWorld.parseNodes();
 

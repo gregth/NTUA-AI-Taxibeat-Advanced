@@ -14,7 +14,7 @@ public class Client extends Position {
         this.print();
     }
 
-    public static Client parse() {
+    public static Client parse(PrologParser prologSystem) {
         BufferedReader reader = null;
 
         Client position = null;
@@ -39,9 +39,8 @@ public class Client extends Position {
             language = numbers[6];
             luggage = Integer.valueOf(numbers[7].trim());
 
-            PrologParser prologSystem = PrologParser.getInstance();
-
             String predicate = "client(" + x + "," + y + "," + xDest + "," + yDest + "," + time + "," + persons + "," + language + "," + luggage + ")";
+            prologSystem.asserta(predicate);
 
             position = new Client(x, y);
         } catch (IOException e) {
