@@ -19,7 +19,7 @@ public class Taxi extends Position {
         return id;
     }
 
-    public static ArrayList<Taxi> parse() {
+    public static ArrayList<Taxi> parse(PrologParser prologSystem) {
         BufferedReader reader = null;
         ArrayList<Taxi> fleet = new ArrayList<Taxi>();
 
@@ -29,8 +29,8 @@ public class Taxi extends Position {
             double x, y, rating;
             int id;
             boolean available, longDistance;
-            String line = null, languages, capacity, type;
-            String[] numbers = null;
+            String line = null, type;
+            String[] numbers = null, languages, capacity;
             reader.readLine(); // skip the first line with the captions
             Taxi taxi = null;
             while ((line = reader.readLine()) != null) {
@@ -40,14 +40,21 @@ public class Taxi extends Position {
                 y = Double.valueOf(numbers[1].trim());
                 id = Integer.valueOf(numbers[2].trim());
                 available = numbers[3].trim().equals("yes") ? true : false;
-                capacity = numbers[4].trim();
-                languages = numbers[5].trim();
+                capacity = numbers[4].trim().split("-");
+                languages = numbers[5].trim().split("\\|");
                 rating = Double.valueOf(numbers[6].trim());
                 longDistance = numbers[7].trim().equals("yes") ? true : false;
                 type = numbers[8].trim();
 
-                //TODO: PARSE LANGUAGES
-                String predicate = "taxi(" + x + "," + y + "," + id + "," + available + "," + capacity + "," + languages + "," + rating + "," + longDistance + "," + type + ")";
+                String predicate = "taxi(" + x + "," + y + "," + id + "," + available + "," + rating + "," + longDistance + "," + type + ")";
+                prologSystem.asserta(predicate);
+
+                for (String language : languages) {
+                    prologSystem.asserta("speaksDriver(" + id + "," + language + ")");
+                }
+
+                prologSystem.asserta("minPassengers(" + id + "," + capacity[0] + ")");
+                prologSystem.asserta("maxPassengers(" + id + "," + capacity[1] + ")");
 
                 fleet.add(new Taxi(id, x, y));
             }
