@@ -18,4 +18,8 @@ public class Node extends Position {
     public int getStreetID() {
         return streetID;
     }
+
+    public void println() {
+        System.out.println(this.stringify());
+    }
 }
