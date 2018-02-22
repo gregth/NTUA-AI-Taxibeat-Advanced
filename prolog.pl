@@ -61,27 +61,32 @@ canMoveFromTo(Ax, Ay, Bx, By) :-
     node(Bx, By, LineID, _, FLb),
     allowedDirection(LineID, FLa, FLb).
 
+score(living_street, 0.6).
+score(secondary, 0.4).
+score(secondary_link, 0.4).
+score(primary, 0.5).
+score(primary_link, 0.5).
+score(tertiary, 0.5).
+score(trunk, 0.5).
+score(motorway, 0.5).
+score(motorway_link, 0.5).
+score(_, 0.8).
+
 /* Rank lines */ 
 highwayType(LineID, Type) :-
     lineSpecs(LineID, Type, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _). 
 
-highwayRank(LineID, 0.5) :- 
-    highwayType(LineID, primary).
-
-highwayRank(LineID, 1) :- 
-    highwayType(LineID, tertiary).
-    
-highwayRank(LineID, 0.7) :- 
-    highwayType(LineID, primary).
-
+highwayRank(LineID, Value) :- 
+    highwayType(LineID, Type), 
+    score(Type, Score),
+    Value = Score.
 
 /* Determine the coefficient of the road A==B. The less the coefficient the better the line. */
-coefficient(Ax, Ay, Bx, By, Value) :-
+weightFactor(Ax, Ay, Bx, By, Value) :-
     node(Ax, Ay, LineID, _, _),
     node(Bx, By, LineID, _, _),
-    highwayRank(LineID, HRank ),
-    TRank is 1,
-    Value is HRank * TRank.
+    highwayRank(LineID, HRank),
+    Value is HRank.
 
 /* A is the current Node, B is the examined child Node */
 heuristsic(Ax, Ay, Bx, By, DistanceFromBToTarget, Value) :-
