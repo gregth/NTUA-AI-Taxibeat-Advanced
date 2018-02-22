@@ -67,4 +67,15 @@ public class PrologParser {
             return -1;
         }
     }
+
+    public boolean isQualifiedDriver(int driverID) {
+        String queryString = "isQualifiedDriverForClient(" + driverID + ").";
+        jipQuery = jip.openSynchronousQuery(parser.parseTerm(queryString));
+        if (jipQuery.nextSolution() != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
