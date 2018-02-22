@@ -22,8 +22,7 @@ public class Taxibeat {
         linesFile = new String(args[4]);
 
         prologSystem = PrologParser.getInstance();
-        prologSystem.test();
-        // Use parser to add facts in Prolog database
+        // Use parser to add facts in //Prolog database
 
         World myWorld = World.getInstance();
         ArrayList<Taxi> fleet = Taxi.parse();

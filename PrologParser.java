@@ -31,30 +31,8 @@ public class PrologParser {
 
     // Asserts a predicate in prolog database
     void asserta(String predicate) {
-        System.out.println("Asserted: " + predicate);
         jip.asserta(parser.parseTerm(predicate));
     }
-
-    public void test() {
-        try {
-
-            String x, y;
-            x = "ton";
-            y = "mary";
-
-            System.out.println("CASE 1");
-            jipQuery = jip.openSynchronousQuery(parser.parseTerm("likes(" + x + "," + y + ")."));
-            if (jipQuery.nextSolution() != null) {
-                System.out.println("Yes. " + x + " likes " + y + ".");
-            } else {
-                System.out.println("No. " + x + " doesn't like " + y + ".");
-            }
-        } catch (Exception e) {
-            System.out.println("Error in Prolog Parser");
-            System.out.println(e.getMessage());
-        }
-
-	}
 
     public boolean canMoveFromTo(SearchNode A, SearchNode B) {
         double Ax = A.getNode().getX();
@@ -65,13 +43,28 @@ public class PrologParser {
         String queryString = "canMoveFromTo(" + Ax + "," + Ay + "," + Bx + ","  + By + ").";
         jipQuery = jip.openSynchronousQuery(parser.parseTerm(queryString));
         if (jipQuery.nextSolution() != null) {
-            System.out.println("Prolog query invoked. Can move from to");
-            System.out.println(queryString);
             return true;
         } else {
-            System.out.println("Prolog query invoked. Can not move from to");
-            System.out.println(queryString);
             return false;
+        }
+    }
+
+    public double calculateFactor(SearchNode A, SearchNode B) {
+        double Ax = A.getNode().getX();
+        double Ay = A.getNode().getY();
+        double Bx = B.getNode().getX();
+        double By = B.getNode().getY();
+
+        String queryString = "weightFactor(" + Ax + "," + Ay + "," + Bx + ","  + By + ", Value).";
+        jipQuery = jip.openSynchronousQuery(parser.parseTerm(queryString));
+		term = jipQuery.nextSolution();
+		if (term != null) {
+            String factorString = term.getVariablesTable().get("Value").toString();
+            double factor = Double.parseDouble(factorString);
+            return factor;
+		} else {
+            System.out.println("Factor calculation failed :(");
+            return -1;
         }
     }
 }
