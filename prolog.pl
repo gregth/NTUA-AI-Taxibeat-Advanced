@@ -87,3 +87,46 @@ weightFactor(Ax, Ay, Bx, By, Value) :-
     node(Bx, By, LineID, _, _),
     highwayRank(LineID, HRank),
     Value is HRank.
+
+/* Client Predicates */
+speaksClient(Language) :-
+    client(_, _, _, _, _, _, Language, _).
+
+clientPassengers(Number) :-
+    client(_, _, _, _, _, Number, _, _).
+
+clientLuggage(Number) :-
+    client(_, _, _, _, _, _, _, Number).
+
+availableDriver(DriverID) :-
+    taxi(_, _, DriverID, yes, _, _, _).
+
+/* Driver Predicates */
+driverRating(DriverID, Rating) :-
+    taxi(_, _, DriverID, _, Rating, _, _).
+
+drivesLongDistance(DriverID) :-
+    taxi(_, _, DriverID, _, _, yes, _).
+
+vehicleType(DriverID, Type) :- 
+    taxi(_, _, DriverID, _, _, _, Type).
+
+luggageFisInVehicle(0, _).
+
+luggageFisInVehicle(NumberOfLuggage, DriverID) :-
+    NumberOfLuggage > 0,
+    vehicleType(DriverID, Type),
+    Type \= compact,
+    Type \= subcompact.
+
+isQualifiedDriverForClient(DriverID) :-
+    speaksClient(Language),
+    speaksDriver(DriverID, Language),
+    availableDriver(DriverID),
+    clientPassengers(Number),
+    maxPassengers(DriverID, Max),
+    minPassengers(DriverID, Min),
+    Number =< Max,
+    Number >= Min,
+    clientLuggage(NumberOfLuggage),
+    luggageFisInVehicle(NumberOfLuggage, DriverID).
