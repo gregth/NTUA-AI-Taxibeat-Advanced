@@ -87,8 +87,3 @@ weightFactor(Ax, Ay, Bx, By, Value) :-
     node(Bx, By, LineID, _, _),
     highwayRank(LineID, HRank),
     Value is HRank.
-
-/* A is the current Node, B is the examined child Node */
-heuristsic(Ax, Ay, Bx, By, DistanceFromBToTarget, Value) :-
-    coefficient(Ax, Ay, Bx, By, CoefficientValue),
-    Value is CoefficientValue * DistanceFromBToTarget.
