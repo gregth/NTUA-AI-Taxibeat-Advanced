@@ -56,11 +56,11 @@ public class PrologParser {
 
 	}
 
-    public boolean canMoveFromTo(Node A, Node B) {
-        double Ax = A.getX();
-        double Ay = A.getY();
-        double Bx = B.getX();
-        double By = B.getY();
+    public boolean canMoveFromTo(SearchNode A, SearchNode B) {
+        double Ax = A.getNode().getX();
+        double Ay = A.getNode().getY();
+        double Bx = B.getNode().getX();
+        double By = B.getNode().getY();
 
         String queryString = "canMoveFromTo(" + Ax + "," + Ay + "," + Bx + ","  + By + ").";
         jipQuery = jip.openSynchronousQuery(parser.parseTerm(queryString));

@@ -6,6 +6,7 @@ public class Taxibeat {
     public static String clientFile;
     public static String nodesFile;
     public static String linesFile;
+    public static PrologParser prologSystem;
 
     public static void main(String[] args) {
         if (args.length != 5) {
@@ -20,7 +21,7 @@ public class Taxibeat {
         clientFile = new String(args[3]);
         linesFile = new String(args[4]);
 
-        PrologParser prologSystem = PrologParser.getInstance();
+        prologSystem = PrologParser.getInstance();
         prologSystem.test();
         // Use parser to add facts in Prolog database
 
@@ -68,6 +69,11 @@ public class Taxibeat {
         SearchNode startNode = searchSpaceMap.get(startPosition.stringify());
         for (GraphEdge neighbor : (startNode.getNeighbors())) {
             SearchNode theNode = neighbor.getNode();
+
+            if (!prologSystem.canMoveFromTo(startNode, theNode)) {
+                continue;
+            }
+
             theNode.setCost(neighbor.getWeight());
             theNode.setPrevious(startNode);
             searchSpace.setDirtyEntry(theNode);
@@ -99,6 +105,11 @@ public class Taxibeat {
 
             for (GraphEdge neighbor : top.getNeighbors()) {
                 SearchNode theNode = neighbor.getNode();
+
+                if (!prologSystem.canMoveFromTo(top, theNode)) {
+                    continue;
+                }
+
                 if (!visited.contains(theNode.stringify())) {
                     double theCost = top.getRouteCost() + neighbor.getWeight();
                     if (inQueueHash.containsKey(theNode.stringify())) {
