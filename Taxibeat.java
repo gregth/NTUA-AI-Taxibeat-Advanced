@@ -73,7 +73,10 @@ public class Taxibeat {
                 continue;
             }
 
-            theNode.setCost(neighbor.getWeight());
+            double weightFactor = prologSystem.calculateFactor(startNode, theNode);
+
+            theNode.setFactor(weightFactor);
+            theNode.setCost(weightFactor * neighbor.getWeight());
             theNode.setPrevious(startNode);
             searchSpace.setDirtyEntry(theNode);
             queue.add(theNode);
@@ -110,7 +113,9 @@ public class Taxibeat {
                 }
 
                 if (!visited.contains(theNode.stringify())) {
-                    double theCost = top.getRouteCost() + neighbor.getWeight();
+                    double weightFactor = prologSystem.calculateFactor(top, theNode);
+                    double theCost = top.getRouteCost() + weightFactor * neighbor.getWeight();
+
                     if (inQueueHash.containsKey(theNode.stringify())) {
                         if (theCost < theNode.getRouteCost()) {
                             /* WARRING: Strange it seems, but if you don't remove the
@@ -119,6 +124,7 @@ public class Taxibeat {
                              * by this, now solved
                              */
                             queue.remove(theNode);
+                            theNode.setFactor(weightFactor);
                             theNode.setCost(theCost);
                             theNode.setPrevious(top);
                             searchSpace.setDirtyEntry(theNode);
@@ -126,6 +132,7 @@ public class Taxibeat {
                         }
                     } else {
                         theNode.setPrevious(top);
+                        theNode.setFactor(weightFactor);
                         theNode.setCost(theCost);
                         searchSpace.setDirtyEntry(theNode);
                         queue.add(theNode);
