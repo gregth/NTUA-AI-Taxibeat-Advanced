@@ -28,8 +28,7 @@ public class Taxi extends Position {
 
             double x, y, rating;
             int id;
-            boolean available, longDistance;
-            String line = null, type;
+            String line = null, type, available, longDistance;
             String[] numbers = null, languages, capacity;
             reader.readLine(); // skip the first line with the captions
             Taxi taxi = null;
@@ -39,11 +38,11 @@ public class Taxi extends Position {
                 x = Double.valueOf(numbers[0].trim());
                 y = Double.valueOf(numbers[1].trim());
                 id = Integer.valueOf(numbers[2].trim());
-                available = numbers[3].trim().equals("yes") ? true : false;
+                available = numbers[3].trim();
                 capacity = numbers[4].trim().split("-");
                 languages = numbers[5].trim().split("\\|");
                 rating = Double.valueOf(numbers[6].trim());
-                longDistance = numbers[7].trim().equals("yes") ? true : false;
+                longDistance = numbers[7].trim();
                 type = numbers[8].trim();
 
                 String predicate = "taxi(" + x + "," + y + "," + id + "," + available + "," + rating + "," + longDistance + "," + type + ")";
