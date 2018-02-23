@@ -111,9 +111,9 @@ drivesLongDistance(DriverID) :-
 vehicleType(DriverID, Type) :- 
     taxi(_, _, DriverID, _, _, _, Type).
 
-luggageFisInVehicle(0, _).
+luggageFitsInVehicle(0, _).
 
-luggageFisInVehicle(NumberOfLuggage, DriverID) :-
+luggageFitsInVehicle(NumberOfLuggage, DriverID) :-
     NumberOfLuggage > 0,
     vehicleType(DriverID, Type),
     Type \= compact,
@@ -129,7 +129,7 @@ isQualifiedDriverForClient(DriverID) :-
     Number =< Max,
     Number >= Min,
     clientLuggage(NumberOfLuggage),
-    luggageFisInVehicle(NumberOfLuggage, DriverID).
+    luggageFitsInVehicle(NumberOfLuggage, DriverID).
 
 driverRank(Rank) :-
     taxi(_, _, DriverID, _, Rank, _, _).
