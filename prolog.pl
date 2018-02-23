@@ -87,7 +87,7 @@ requestTime(Time) :-
 % The smaller the value, the better the traffic.
 trafficValueToRank(high, 1).
 trafficValueToRank(medium, 0.8).
-trafficValueToRank(low, 0.7).
+trafficValueToRank(low, 0.6).
 
 trafficRank(LineID, Rank) :-
     requestTime(Time),
@@ -97,7 +97,7 @@ trafficRank(LineID, Rank) :-
     trafficValueToRank(Value, Rank).
 
 % Traffic Rank for unspecified roads equals 1
-trafficRank(_, 1).
+trafficRank(_, 0.8).
 
 /* Determine the coefficient of the road A==B. The less the coefficient the better the line. */
 weightFactor(Ax, Ay, Bx, By, Value) :-
