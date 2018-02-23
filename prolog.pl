@@ -130,3 +130,6 @@ isQualifiedDriverForClient(DriverID) :-
     Number >= Min,
     clientLuggage(NumberOfLuggage),
     luggageFisInVehicle(NumberOfLuggage, DriverID).
+
+driverRank(Rank) :-
+    taxi(_, _, DriverID, _, Rank, _, _).

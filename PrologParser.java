@@ -78,4 +78,19 @@ public class PrologParser {
         }
     }
 
+    public double getDriverRank(int driverID) {
+        String queryString = "driverRank(" + driverID + ",Rank).";
+        jipQuery = jip.openSynchronousQuery(parser.parseTerm(queryString));
+		term = jipQuery.nextSolution();
+		if (term != null) {
+            String rankString = term.getVariablesTable().get("Rank").toString();
+            double rank = Double.parseDouble(rankString);
+            return rank;
+		} else {
+            System.out.println("Rank calculation failed :(");
+            return -1;
+        }
+    }
+
+
 }
