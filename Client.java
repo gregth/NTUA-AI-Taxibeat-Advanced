@@ -34,7 +34,7 @@ public class Client extends Position {
             y = Double.valueOf(numbers[1].trim());
             xDest = Double.valueOf(numbers[2].trim());
             yDest = Double.valueOf(numbers[3].trim());
-            time = numbers[4];
+            time = numbers[4].replace(":", "");
             persons = Integer.valueOf(numbers[5].trim());
             language = numbers[6];
             luggage = Integer.valueOf(numbers[7].trim());
