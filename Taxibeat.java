@@ -68,9 +68,11 @@ public class Taxibeat {
             System.out.println(taxi.getId() + " - Rating: " + taxi.getRating());
         }
 
-        XMLFile outFile = new XMLFile("output/out-" +
-                Taxibeat.nodesFile.replace(".csv","").replace("/","-") + "-" + maxFrontier + ".kml");
-        outFile.write(routes);
+        if (routes.size() > 0) {
+            XMLFile outFile = new XMLFile("output/out-" +
+                    Taxibeat.nodesFile.replace(".csv","").replace("/","-") + "-" + maxFrontier + ".kml");
+            outFile.write(routes);
+        }
     }
 
     private static Route findRoute(SearchSpace searchSpace, Position startPosition, int maxFrontier) {
