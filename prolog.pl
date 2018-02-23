@@ -81,12 +81,31 @@ highwayRank(LineID, Value) :-
     score(Type, Score),
     Value = Score.
 
+requestTime(Time) :-
+    client(_, _, _, _, Time, _, _, _).
+
+% The smaller the value, the better the traffic.
+trafficValueToRank(high, 1).
+trafficValueToRank(medium, 0.8).
+trafficValueToRank(low, 0.7).
+
+trafficRank(LineID, Rank) :-
+    requestTime(Time),
+    lineTraffic(LineID, StartTime, EndTime, Value),
+    StartTime =< Time,
+    EndTime >= Time,
+    trafficValueToRank(Value, Rank).
+
+% Traffic Rank for unspecified roads equals 1
+trafficRank(_, 1).
+
 /* Determine the coefficient of the road A==B. The less the coefficient the better the line. */
 weightFactor(Ax, Ay, Bx, By, Value) :-
     node(Ax, Ay, LineID, _, _),
     node(Bx, By, LineID, _, _),
     highwayRank(LineID, HRank),
-    Value is HRank.
+    trafficRank(LineID, TRank),
+    Value is HRank * TRank.
 
 /* Client Predicates */
 speaksClient(Language) :-
