@@ -35,34 +35,38 @@ public class Taxibeat {
         Comparator<Route> routeComparator = new RouteComparator();
         SortedSet<Route> routes = new TreeSet<Route>(routeComparator);
         double minRouteDistance = -1;
-        System.out.println("\n\n****PRINTING STATISTICS****\n");
-        System.out.println("DriverID, Steps, ActualMaxFrontier, MaxFrontier");
 
         SearchSpace searchSpace = myWorld.generateSearchSpace(clientPosition);
+
+        Comparator<Taxi> taxiComparator = new TaxiComparator();
+        SortedSet<Taxi> availableTaxis = new TreeSet<Taxi>(taxiComparator);
         for (Taxi taxi : fleet) {
             if (!prologSystem.isQualifiedDriver(taxi.getId())) {
                 continue;
             }
+            taxi.setRating(prologSystem.getDriverRank(taxi.getId()));
             searchSpace.clean();
             Node driverNode = myWorld.closestNode(taxi);
-            System.out.print(taxi.getId() + ",");
             Route route = findRoute(searchSpace, driverNode, maxFrontier);
             if (route != null) {
                 route.assignDriver(taxi);
                 routes.add(route);
+                availableTaxis.add(taxi);
             }
         }
 
+        System.out.println("Available taxis sorted by distance:");
         for (Route route : routes) {
             System.out.println(route.getDriver().getId() + " - " + route.getCost() + "km");
         }
+        System.out.println("Available taxis sorted by rating:");
+        for (Taxi taxi : availableTaxis) {
+            System.out.println(taxi.getId() + " - Rating: " + taxi.getRating());
+        }
 
-        System.out.println("\nSelected Driver ID: " + routes.first().getDriver().getId()
-                + " with total cost: " + routes.first().getCost() + " Kilometers.");
         XMLFile outFile = new XMLFile("output/out-" +
                 Taxibeat.nodesFile.replace(".csv","").replace("/","-") + "-" + maxFrontier + ".kml");
         outFile.write(routes);
-
     }
 
     private static Route findRoute(SearchSpace searchSpace, Position startPosition, int maxFrontier) {
@@ -159,17 +163,8 @@ public class Taxibeat {
         }
 
         if (foundRoute) {
-            // Print statistics
-            System.out.print(stepsCounter + ",");
-            System.out.print(actualMaxFrontier + ",");
-            System.out.print(maxFrontier + "\n");
             return new Route(top, top.getDistance());
-        } else {
-            System.out.print(stepsCounter + ",");
-            System.out.print("FAIL,");
-            System.out.print(maxFrontier + "\n");
         }
-
         return null;
     }
 }

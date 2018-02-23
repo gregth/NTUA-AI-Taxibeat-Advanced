@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Taxi extends Position {
     int id;
+    double rating;
 
     public Taxi(int id, double x, double y) {
         super(x, y);
@@ -17,6 +18,14 @@ public class Taxi extends Position {
 
     public int getId() {
         return id;
+    }
+
+    public void setRating(double r) {
+        rating = r;
+    }
+
+    public double getRating() {
+        return rating;
     }
 
     public static ArrayList<Taxi> parse(PrologParser prologSystem) {
