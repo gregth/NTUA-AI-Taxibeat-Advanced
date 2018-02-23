@@ -40,6 +40,9 @@ public class Taxibeat {
 
         SearchSpace searchSpace = myWorld.generateSearchSpace(clientPosition);
         for (Taxi taxi : fleet) {
+            if (!prologSystem.isQualifiedDriver(taxi.getId())) {
+                continue;
+            }
             searchSpace.clean();
             Node driverNode = myWorld.closestNode(taxi);
             System.out.print(taxi.getId() + ",");
