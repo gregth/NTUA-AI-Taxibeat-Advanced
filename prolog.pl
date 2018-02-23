@@ -131,5 +131,5 @@ isQualifiedDriverForClient(DriverID) :-
     clientLuggage(NumberOfLuggage),
     luggageFitsInVehicle(NumberOfLuggage, DriverID).
 
-driverRank(Rank) :-
+driverRank(DriverID, Rank) :-
     taxi(_, _, DriverID, _, Rank, _, _).
