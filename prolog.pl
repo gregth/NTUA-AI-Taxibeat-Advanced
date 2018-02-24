@@ -106,6 +106,28 @@ laneRank(LineID, LRank) :-
     numberOfLanes(LineID, Number),
     LRank is 1 - Number * 0.05.
 
+% Define night times
+isNight(Time) :-
+    Time >= 2000, 
+    Time =< 2359.
+
+isNight(Time) :-
+    Time >= 0000, 
+    Time =< 0600.
+
+% Result = yes if LineId has lights, otherwise no.
+hasLights(LineID, Result) :-
+    lineSpecs(LineID, _, _, _, Result, _, _, _, _, _, _, _, _, _, _, _, _, _). 
+
+lightRank(LineID, LitRank) :-
+    requestTime(Time),
+    isNight(Time), 
+    hasLights(LineID, yes),
+    LitRank = 0.8.
+
+% Default lightRank factor is 1
+lightRank(_, 1).
+
 /* Determine the coefficient of the road A==B. The less the coefficient the better the line. */
 weightFactor(Ax, Ay, Bx, By, Value) :-
     node(Ax, Ay, LineID, _, _),
@@ -113,7 +135,8 @@ weightFactor(Ax, Ay, Bx, By, Value) :-
     highwayRank(LineID, HRank),
     trafficRank(LineID, TRank),
     laneRank(LineID, LRank),
-    Value is HRank * TRank * LRank.
+    lightRank(LineID, LitRank),
+    Value is HRank * TRank * LRank * LitRank.
 
 /* Client Predicates */
 speaksClient(Language) :-
