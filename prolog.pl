@@ -21,17 +21,18 @@
  * natural, barrier, waterway.
  */ 
 
-permittedWayType(highway).
 permittedWayType(living_street).
 permittedWayType(motorway).
 permittedWayType(motorway_link).
 permittedWayType(primary).
 permittedWayType(primary_link).
-permittedWayType(residential).
 permittedWayType(secondary).
 permittedWayType(secondary_link).
 permittedWayType(tertiary).
+permittedWayType(tertiary_link).
+permittedWayType(residential).
 permittedWayType(trunk).
+permittedWayType(trunk_link).
 permittedWayType(unknown).
 permittedWayType(unclassified).
 
@@ -61,16 +62,18 @@ canMoveFromTo(Ax, Ay, Bx, By) :-
     node(Bx, By, LineID, _, FLb),
     allowedDirection(LineID, FLa, FLb).
 
-score(living_street, 0.6).
+score(living_street, 0.9).
 score(secondary, 0.4).
 score(secondary_link, 0.4).
 score(primary, 0.5).
 score(primary_link, 0.5).
 score(tertiary, 0.5).
+score(tertiary_link, 0.5).
 score(trunk, 0.5).
+score(trunk_link, 0.5).
 score(motorway, 0.5).
 score(motorway_link, 0.5).
-score(_, 0.8).
+score(_, 0.7).
 
 /* Rank lines */ 
 highwayType(LineID, Type) :-
