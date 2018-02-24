@@ -17,7 +17,7 @@ public class Line {
 
             reader.readLine(); // skip the first line with the captions
             while ((line = reader.readLine()) != null) {
-                line = replaceEscapedComas(line);
+                line = replaceEscapedCommas(line);
                 line = line.replace(",", " , ");
                 parts = line.split(",");
 
@@ -64,16 +64,16 @@ public class Line {
     }
 
     // Works only if there are not escaped quotes in quotes
-    private static String replaceEscapedComas(String line) {
+    private static String replaceEscapedCommas(String line) {
         if (line.contains("\"")) {
             String[] chars = line.split("");
             int index;
-            boolean replaceComas = false;
+            boolean replaceCommas = false;
             for (index = 0; index < chars.length; index++) {
                 if (chars[index].equals("\"")) {
-                    replaceComas = !replaceComas;
+                    replaceCommas = !replaceCommas;
                 }
-                if (chars[index].equals(",") && replaceComas) {
+                if (chars[index].equals(",") && replaceCommas) {
                     chars[index] = " "; //Replace with empty space
                 }
             }
