@@ -69,11 +69,11 @@ score(residential, 0.65).
 score(tertiary, 0.6).
 score(tertiary_link, 0.6).
 
-score(secondary, 0.55).
-score(secondary_link, 0.55).
+score(secondary, 0.5).
+score(secondary_link, 0.5).
 
-score(primary, 0.5).
-score(primary_link, 0.5).
+score(primary, 0.45).
+score(primary_link, 0.45).
 
 score(trunk, 0.4).
 score(trunk_link, 0.4).
