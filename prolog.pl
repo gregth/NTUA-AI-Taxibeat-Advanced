@@ -99,13 +99,23 @@ trafficRank(LineID, Rank) :-
 % Traffic Rank for unspecified roads equals 1
 trafficRank(_, 0.8).
 
+numberOfLanes(LineID, Number) :-
+    lineSpecs(LineID, _, _, _, _, Number, _, _, _, _, _, _, _, _, _, _, _, _). 
+
+laneRank(LineID, LRank) :-
+    numberOfLanes(LineID, Number),
+    LRank is 1 - Number * 0.05.
+
 /* Determine the coefficient of the road A==B. The less the coefficient the better the line. */
 weightFactor(Ax, Ay, Bx, By, Value) :-
     node(Ax, Ay, LineID, _, _),
     node(Bx, By, LineID, _, _),
     highwayRank(LineID, HRank),
     trafficRank(LineID, TRank),
-    Value is HRank * TRank.
+    laneRank(LineID, LRank),
+    write(LRank),
+    write(end),
+    Value is HRank * TRank * LRank.
 
 /* Client Predicates */
 speaksClient(Language) :-
