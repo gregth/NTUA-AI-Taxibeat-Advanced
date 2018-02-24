@@ -63,16 +63,23 @@ canMoveFromTo(Ax, Ay, Bx, By) :-
     allowedDirection(LineID, FLa, FLb).
 
 score(living_street, 0.9).
-score(secondary, 0.4).
-score(secondary_link, 0.4).
+
+score(residential, 0.65).
+
+score(tertiary, 0.6).
+score(tertiary_link, 0.6).
+
+score(secondary, 0.55).
+score(secondary_link, 0.55).
+
 score(primary, 0.5).
 score(primary_link, 0.5).
-score(tertiary, 0.5).
-score(tertiary_link, 0.5).
-score(trunk, 0.5).
-score(trunk_link, 0.5).
-score(motorway, 0.5).
-score(motorway_link, 0.5).
+
+score(trunk, 0.4).
+score(trunk_link, 0.4).
+score(motorway, 0.4).
+score(motorway_link, 0.4).
+
 score(_, 0.7).
 
 /* Rank lines */ 
